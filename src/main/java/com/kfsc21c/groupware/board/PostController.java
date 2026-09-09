@@ -60,7 +60,7 @@ public class PostController {
 
     @GetMapping("/{id}")
     public String view(@PathVariable Long id, @AuthenticationPrincipal UserDetails principal, Model model) {
-        Post post = postRepository.findById(id)
+        Post post = postRepository.findByIdWithAuthor(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + id));
         post.setViewCount(post.getViewCount() + 1);
         postRepository.save(post);
