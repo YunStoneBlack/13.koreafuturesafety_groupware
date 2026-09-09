@@ -1,23 +1,104 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <h1>한국미래안전 그룹웨어</h1>
-    <p th:text="${username} + '님, 환영합니다.'">환영합니다.</p>
-    <ul>
-        <li><a th:href="@{/board}">공지사항</a></li>
-        <li><a th:href="@{/approval}">전자결재</a></li>
-        <li><a th:href="@{/calendar}">일정공유</a></li>
-        <li><a th:href="@{/staff}">직원정보</a></li>
-        <li><a th:href="@{/report}">보고서 자동화</a></li>
-        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}">관리자 메뉴</a></li>
-    </ul>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">로그아웃</button>
-    </form>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('home')}"></div>
+
+    <main class="main">
+        <div class="topline">
+            <div>
+                <h1 th:text="${currentUser != null ? currentUser.displayName + '님, 안녕하세요' : '안녕하세요'}">안녕하세요</h1>
+                <p class="page-sub">오늘 확인할 일정과 결재 현황을 정리했습니다.</p>
+            </div>
+            <div class="num page-sub" th:text="${#temporals.format(#temporals.createNow(), 'yyyy.MM.dd (E)')}">오늘</div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="label">결재 대기</div>
+                <div class="value num" th:text="${pendingCount} + '건'">0건</div>
+            </div>
+            <div class="stat">
+                <div class="label">오늘 일정</div>
+                <div class="value num" th:text="${todayEventCount} + '건'">0건</div>
+            </div>
+            <div class="stat">
+                <div class="label">이번 주 공지</div>
+                <div class="value num" th:text="${weekPostCount} + '건'">0건</div>
+            </div>
+            <div class="stat">
+                <div class="label">전체 직원</div>
+                <div class="value num" th:text="${employeeCount} + '명'">0명</div>
+            </div>
+        </div>
+
+        <div class="stats" style="grid-template-columns: 1.5fr 1fr; align-items: start;">
+            <div>
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>공지사항</h2>
+                        <a class="action" th:href="@{/board}">전체 보기 →</a>
+                    </div>
+                    <div class="rows">
+                        <a class="row" th:each="p : ${recentPosts}" th:href="@{/board/{id}(id=${p.id})}">
+                            <span class="title" th:text="${p.title}">제목</span>
+                            <span class="meta num" th:text="${#temporals.format(p.createdAt, 'MM.dd')}">날짜</span>
+                        </a>
+                        <div class="empty-note" th:if="${#lists.isEmpty(recentPosts)}">등록된 공지사항이 없습니다.</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>전자결재 · 대기 중</h2>
+                        <a class="action" th:href="@{/approval}">전체 보기 →</a>
+                    </div>
+                    <div class="rows">
+                        <a class="row" th:each="a : ${pendingApprovals}" th:href="@{/approval/{id}(id=${a.id})}">
+                            <span class="title" th:text="${a.title} + ' — ' + ${a.requester.displayName}">제목</span>
+                            <span class="status-pill pending">대기</span>
+                        </a>
+                        <div class="empty-note" th:if="${#lists.isEmpty(pendingApprovals)}">대기 중인 결재가 없습니다.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>다가오는 일정</h2>
+                        <a class="action" th:href="@{/calendar}">캘린더 →</a>
+                    </div>
+                    <div class="rows">
+                        <a class="row" th:each="e : ${upcomingEvents}" th:href="@{/calendar}">
+                            <span class="title" th:text="${e.title}">일정</span>
+                            <span class="meta num" th:text="${#temporals.format(e.startDateTime, 'MM.dd HH:mm')}">일시</span>
+                        </a>
+                        <div class="empty-note" th:if="${#lists.isEmpty(upcomingEvents)}">예정된 일정이 없습니다.</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>직원정보</h2>
+                        <a class="action" th:href="@{/staff}">조직도 →</a>
+                    </div>
+                    <div class="rows">
+                        <div class="row" th:each="entry : ${deptCounts}">
+                            <span class="title" th:text="${entry.key}">부서</span>
+                            <span class="meta num" th:text="${entry.value} + '명'">0명</span>
+                        </div>
+                        <div class="empty-note" th:if="${#maps.isEmpty(deptCounts)}">등록된 직원이 없습니다.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
 </body>
 </html>

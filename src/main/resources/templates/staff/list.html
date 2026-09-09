@@ -3,31 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>직원정보 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <p><a th:href="@{/}">홈으로</a></p>
-    <h1>직원정보 (조직도)</h1>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('staff')}"></div>
 
-    <table border="1" cellpadding="6">
-        <thead>
-        <tr>
-            <th>이름</th>
-            <th>부서</th>
-            <th>직급</th>
-            <th>연락처</th>
-            <th>이메일</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="e : ${employees}">
-            <td th:text="${e.name}">이름</td>
-            <td th:text="${e.department}">부서</td>
-            <td th:text="${e.position}">직급</td>
-            <td th:text="${e.phone}">연락처</td>
-            <td th:text="${e.email}">이메일</td>
-        </tr>
-        </tbody>
-    </table>
+    <main class="main">
+        <div class="topline">
+            <div>
+                <h1>직원정보</h1>
+                <p class="page-sub">조직도 조회 화면입니다. 등록/수정은 관리자 메뉴에서 가능합니다.</p>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-body" style="padding:0;">
+                <table class="plain">
+                    <thead>
+                    <tr><th>이름</th><th>부서</th><th>직급</th><th>연락처</th><th>이메일</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="e : ${employees}">
+                        <td th:text="${e.name}">이름</td>
+                        <td th:text="${e.department}">부서</td>
+                        <td th:text="${e.position}">직급</td>
+                        <td th:text="${e.phone}">연락처</td>
+                        <td th:text="${e.email}">이메일</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="empty-note" th:if="${#lists.isEmpty(employees)}">등록된 직원이 없습니다.</div>
+            </div>
+        </div>
+    </main>
+</div>
 </body>
 </html>

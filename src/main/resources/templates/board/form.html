@@ -3,23 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>글쓰기 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/board}">목록으로</a></p>
-    <h1 th:text="${post.id} != null ? '글 수정' : '글쓰기'">글쓰기</h1>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('board')}"></div>
 
-    <form th:action="${post.id} != null ? @{/board/{id}(id=${post.id})} : @{/board}"
-          th:object="${post}" method="post">
-        <div>
-            <label>제목</label>
-            <input type="text" th:field="*{title}" required style="width:100%" />
-        </div>
-        <div>
-            <label>내용</label>
-            <textarea th:field="*{content}" rows="10" style="width:100%" required></textarea>
-        </div>
-        <button type="submit">저장</button>
-    </form>
+    <main class="main">
+        <div class="crumb"><a th:href="@{/board}">공지사항</a><span class="sep">/</span><span th:text="${post.id} != null ? '수정' : '글쓰기'">글쓰기</span></div>
+        <h1 th:text="${post.id} != null ? '글 수정' : '글쓰기'">글쓰기</h1>
+
+        <form class="form-card" th:action="${post.id} != null ? @{/board/{id}(id=${post.id})} : @{/board}"
+              th:object="${post}" method="post">
+            <div class="field">
+                <label>제목</label>
+                <input type="text" th:field="*{title}" required />
+            </div>
+            <div class="field">
+                <label>내용</label>
+                <textarea th:field="*{content}" rows="10" required></textarea>
+            </div>
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a class="btn btn-ghost" th:href="@{/board}">취소</a>
+            </div>
+        </form>
+    </main>
+</div>
 </body>
 </html>

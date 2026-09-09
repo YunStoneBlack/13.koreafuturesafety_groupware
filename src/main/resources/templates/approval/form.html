@@ -3,29 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>결재 요청 작성 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/approval}">목록으로</a></p>
-    <h1>결재 요청 작성</h1>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('approval')}"></div>
 
-    <form th:action="@{/approval}" th:object="${request}" method="post">
-        <div>
-            <label>구분</label>
-            <select th:field="*{type}">
-                <option th:each="t : ${types}" th:value="${t}" th:text="${t}">TYPE</option>
-            </select>
-        </div>
-        <div>
-            <label>제목</label>
-            <input type="text" th:field="*{title}" required style="width:100%" />
-        </div>
-        <div>
-            <label>내용</label>
-            <textarea th:field="*{content}" rows="8" style="width:100%" required></textarea>
-        </div>
-        <button type="submit">임시저장 (초안)</button>
-    </form>
-    <p>* 작성 후 상세 화면에서 "제출"을 눌러야 결재가 시작됩니다.</p>
+    <main class="main">
+        <div class="crumb"><a th:href="@{/approval}">전자결재</a><span class="sep">/</span><span>작성</span></div>
+        <h1>결재 요청 작성</h1>
+
+        <form class="form-card" th:action="@{/approval}" th:object="${request}" method="post">
+            <div class="field">
+                <label>구분</label>
+                <select th:field="*{type}">
+                    <option th:each="t : ${types}" th:value="${t}" th:text="${t}">TYPE</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>제목</label>
+                <input type="text" th:field="*{title}" required />
+            </div>
+            <div class="field">
+                <label>내용</label>
+                <textarea th:field="*{content}" rows="8" required></textarea>
+                <div class="hint">저장 후 상세 화면에서 "제출"을 눌러야 결재가 시작됩니다.</div>
+            </div>
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">임시저장 (초안)</button>
+                <a class="btn btn-ghost" th:href="@{/approval}">취소</a>
+            </div>
+        </form>
+    </main>
+</div>
 </body>
 </html>

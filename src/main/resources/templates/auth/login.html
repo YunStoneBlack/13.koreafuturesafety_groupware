@@ -3,32 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>로그인 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <style>
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .login-card {
+            width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line);
+            border-radius: 14px; box-shadow: var(--shadow-card); padding: 36px 34px 30px;
+        }
+        .login-card img { height: 30px; display: block; margin: 0 auto 22px; }
+        .login-card h1 { font-size: 17px; text-align: center; margin: 0 0 22px; }
+        .login-msg { font-size: 13px; text-align: center; margin: 0 0 16px; padding: 8px; border-radius: 8px; }
+        .login-msg.error { background: var(--crit-soft); color: var(--crit); }
+        .login-msg.ok { background: var(--green-soft); color: var(--green); }
+        .login-card .btn { width: 100%; justify-content: center; margin-top: 4px; }
+    </style>
 </head>
 <body>
-    <img src="/img/logo.png" alt="한국미래안전" style="height:44px; width:auto;" />
-    <h1>한국미래안전 그룹웨어</h1>
+    <div class="login-card">
+        <img src="/img/logo.png" alt="한국미래안전" />
+        <h1>한국미래안전 그룹웨어</h1>
 
-    <p th:if="${param.error}" style="color:red;">아이디 또는 비밀번호가 올바르지 않습니다.</p>
-    <p th:if="${param.logout}" style="color:green;">로그아웃되었습니다.</p>
-    <p th:if="${param.renamed}" style="color:green;">아이디가 변경되었습니다. 새 아이디로 다시 로그인해주세요.</p>
+        <p class="login-msg error" th:if="${param.error}">아이디 또는 비밀번호가 올바르지 않습니다.</p>
+        <p class="login-msg ok" th:if="${param.logout}">로그아웃되었습니다.</p>
+        <p class="login-msg ok" th:if="${param.renamed}">아이디가 변경되었습니다. 새 아이디로 다시 로그인해주세요.</p>
 
-    <form id="loginForm" th:action="@{/login}" method="post" autocomplete="on">
-        <div>
-            <label>아이디</label>
-            <input type="text" id="username" name="username" autocomplete="username" required />
-        </div>
-        <div>
-            <label>비밀번호</label>
-            <input type="password" id="password" name="password" autocomplete="current-password" required />
-        </div>
-        <div>
-            <label>
+        <form id="loginForm" th:action="@{/login}" method="post" autocomplete="on">
+            <div class="field">
+                <label>아이디</label>
+                <input type="text" id="username" name="username" autocomplete="username" required />
+            </div>
+            <div class="field">
+                <label>비밀번호</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required />
+            </div>
+            <div class="field checkbox-row">
                 <input type="checkbox" id="rememberId" />
-                아이디 저장
-            </label>
-        </div>
-        <button type="submit">로그인</button>
-    </form>
+                <label for="rememberId">아이디 저장</label>
+            </div>
+            <button type="submit" class="btn btn-primary">로그인</button>
+        </form>
+    </div>
 
     <script>
         (function () {

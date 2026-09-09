@@ -3,35 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>직원정보 입력 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/admin/employees}">목록으로</a></p>
-    <h1 th:text="${employee.id} != null ? '직원 정보 수정' : '직원 추가'">직원 추가</h1>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('admin')}"></div>
 
-    <form th:action="${employee.id} != null ? @{/admin/employees/{id}(id=${employee.id})} : @{/admin/employees}"
-          th:object="${employee}" method="post">
-        <div>
-            <label>이름</label>
-            <input type="text" th:field="*{name}" required />
-        </div>
-        <div>
-            <label>부서</label>
-            <input type="text" th:field="*{department}" required />
-        </div>
-        <div>
-            <label>직급</label>
-            <input type="text" th:field="*{position}" />
-        </div>
-        <div>
-            <label>연락처</label>
-            <input type="text" th:field="*{phone}" />
-        </div>
-        <div>
-            <label>이메일</label>
-            <input type="email" th:field="*{email}" />
-        </div>
-        <button type="submit">저장</button>
-    </form>
+    <main class="main">
+        <div class="crumb"><a th:href="@{/admin}">관리자 메뉴</a><span class="sep">/</span><a th:href="@{/admin/employees}">직원정보 관리</a><span class="sep">/</span><span th:text="${employee.id} != null ? '수정' : '추가'">추가</span></div>
+        <h1 th:text="${employee.id} != null ? '직원 정보 수정' : '직원 추가'">직원 추가</h1>
+
+        <form class="form-card" th:action="${employee.id} != null ? @{/admin/employees/{id}(id=${employee.id})} : @{/admin/employees}"
+              th:object="${employee}" method="post">
+            <div class="field">
+                <label>이름</label>
+                <input type="text" th:field="*{name}" required />
+            </div>
+            <div class="field">
+                <label>부서</label>
+                <input type="text" th:field="*{department}" required />
+            </div>
+            <div class="field">
+                <label>직급</label>
+                <input type="text" th:field="*{position}" />
+            </div>
+            <div class="field">
+                <label>연락처</label>
+                <input type="text" th:field="*{phone}" />
+            </div>
+            <div class="field">
+                <label>이메일</label>
+                <input type="email" th:field="*{email}" />
+            </div>
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a class="btn btn-ghost" th:href="@{/admin/employees}">취소</a>
+            </div>
+        </form>
+    </main>
+</div>
 </body>
 </html>

@@ -3,22 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>관리자 메뉴 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <p><a th:href="@{/}">홈으로</a></p>
-    <h1>관리자 메뉴</h1>
-    <ul>
-        <li><a th:href="@{/admin/users}">계정 관리 (아이디/비밀번호)</a></li>
-        <li><a th:href="@{/admin/employees}">직원정보 관리 (조직도 등록/수정/삭제)</a></li>
-    </ul>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('admin')}"></div>
 
-    <p th:if="${param.backedUp}" style="color:green;">백업이 완료되었습니다.</p>
-    <form th:action="@{/admin/backup}" method="post">
-        <button type="submit">지금 백업 (데이터 스냅샷 생성)</button>
-    </form>
-    <p>매일 새벽 3시에 자동으로도 백업되며, 14일치가 지나면 오래된 것부터 자동 삭제됩니다.
-       백업 파일은 서버의 <code>~/groupware/backup/</code>에 쌓입니다 — 회사 PC로 옮기려면
-       이 폴더를 주기적으로 내려받으면 됩니다.</p>
+    <main class="main">
+        <h1>관리자 메뉴</h1>
+        <p class="page-sub" style="margin-bottom: 22px;">계정과 직원정보, 데이터 백업을 관리합니다.</p>
+
+        <div class="panel">
+            <div class="rows">
+                <a class="row" th:href="@{/admin/users}">
+                    <span class="title">계정 관리</span>
+                    <span class="meta">아이디 · 비밀번호 · 권한</span>
+                </a>
+                <a class="row" th:href="@{/admin/employees}">
+                    <span class="title">직원정보 관리</span>
+                    <span class="meta">조직도 등록 · 수정 · 삭제</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-head"><h2>데이터 백업</h2></div>
+            <div class="panel-body">
+                <p th:if="${param.backedUp}" style="margin: 0 0 14px; color: var(--green);">백업이 완료되었습니다.</p>
+                <form th:action="@{/admin/backup}" method="post">
+                    <button type="submit" class="btn btn-primary">지금 백업 (데이터 스냅샷 생성)</button>
+                </form>
+                <p class="hint" style="margin-top: 14px;">매일 새벽 3시에 자동으로도 백업되며, 14일치가 지나면 오래된 것부터 자동
+                    삭제됩니다. 백업 파일은 서버의 <code>~/groupware/backup/</code>에 쌓입니다.</p>
+            </div>
+        </div>
+    </main>
+</div>
 </body>
 </html>

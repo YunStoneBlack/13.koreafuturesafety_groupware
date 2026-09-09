@@ -3,47 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${req.title}">결재 요청</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/approval}">목록으로</a></p>
-    <h1 th:text="${req.title}">제목</h1>
-    <p>
-        구분: <span th:text="${req.type}">TYPE</span> ·
-        기안자: <span th:text="${req.requester.displayName}">기안자</span> ·
-        상태: <span th:text="${req.status}">STATUS</span>
-    </p>
-    <div th:text="${req.content}" style="white-space: pre-wrap;">내용</div>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('approval')}"></div>
 
-    <div th:if="${req.status.name() == 'APPROVED' or req.status.name() == 'REJECTED'}">
-        <p>
-            처리자: <span th:text="${req.approver != null ? req.approver.displayName : ''}"></span> ·
-            처리일시: <span th:text="${req.decidedAt != null ? #temporals.format(req.decidedAt, 'yyyy-MM-dd HH:mm') : ''}"></span>
+    <main class="main">
+        <div class="crumb"><a th:href="@{/approval}">전자결재</a><span class="sep">/</span><span th:text="${req.title}">제목</span></div>
+
+        <div class="topline">
+            <h1 th:text="${req.title}">제목</h1>
+            <span class="status-pill" th:classappend="${req.status.name().toLowerCase()}" th:text="${req.status}">상태</span>
+        </div>
+        <p class="meta-line">
+            <span th:text="${req.type}">구분</span>
+            <b th:text="${req.requester.displayName}">기안자</b>
         </p>
-        <p th:if="${req.approverComment != null and !req.approverComment.isEmpty()}">
-            코멘트: <span th:text="${req.approverComment}"></span>
-        </p>
-    </div>
 
-    <div th:if="${isOwner and req.status.name() == 'DRAFT'}">
-        <form th:action="@{/approval/{id}/submit(id=${req.id})}" method="post" style="display:inline">
-            <button type="submit">제출</button>
-        </form>
-        <form th:action="@{/approval/{id}/delete(id=${req.id})}" method="post" style="display:inline"
-              onsubmit="return confirm('삭제하시겠습니까?');">
-            <button type="submit">삭제</button>
-        </form>
-    </div>
+        <div class="panel">
+            <div class="panel-body content-body" th:text="${req.content}">내용</div>
+        </div>
 
-    <div th:if="${isAdmin and req.status.name() == 'SUBMITTED'}">
-        <form th:action="@{/approval/{id}/approve(id=${req.id})}" method="post">
-            <textarea name="comment" placeholder="코멘트(선택)" rows="2" style="width:100%"></textarea>
-            <button type="submit">승인</button>
-        </form>
-        <form th:action="@{/approval/{id}/reject(id=${req.id})}" method="post">
-            <textarea name="comment" placeholder="반려 사유(선택)" rows="2" style="width:100%"></textarea>
-            <button type="submit">반려</button>
-        </form>
-    </div>
+        <div class="panel" th:if="${req.status.name() == 'APPROVED' or req.status.name() == 'REJECTED'}">
+            <div class="panel-body">
+                <p class="meta-line" style="margin:0 0 8px;">
+                    <span>처리자 <b th:text="${req.approver != null ? req.approver.displayName : ''}"></b></span>
+                    <span th:text="${req.decidedAt != null ? #temporals.format(req.decidedAt, 'yyyy.MM.dd HH:mm') : ''}"></span>
+                </p>
+                <p th:if="${req.approverComment != null and !req.approverComment.isEmpty()}" style="margin:0;" th:text="${req.approverComment}">코멘트</p>
+            </div>
+        </div>
+
+        <div class="btn-row" th:if="${isOwner and req.status.name() == 'DRAFT'}">
+            <form class="inline" th:action="@{/approval/{id}/submit(id=${req.id})}" method="post">
+                <button type="submit" class="btn btn-primary">제출</button>
+            </form>
+            <form class="inline" th:action="@{/approval/{id}/delete(id=${req.id})}" method="post"
+                  onsubmit="return confirm('삭제하시겠습니까?');">
+                <button type="submit" class="btn btn-danger">삭제</button>
+            </form>
+        </div>
+
+        <div class="panel" th:if="${isAdmin and req.status.name() == 'SUBMITTED'}">
+            <div class="panel-body">
+                <form th:action="@{/approval/{id}/approve(id=${req.id})}" method="post" class="field">
+                    <label>승인 코멘트 (선택)</label>
+                    <textarea name="comment" rows="2"></textarea>
+                    <div class="btn-row"><button type="submit" class="btn btn-primary">승인</button></div>
+                </form>
+                <form th:action="@{/approval/{id}/reject(id=${req.id})}" method="post" class="field" style="margin-top:14px;">
+                    <label>반려 사유 (선택)</label>
+                    <textarea name="comment" rows="2"></textarea>
+                    <div class="btn-row"><button type="submit" class="btn btn-danger">반려</button></div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
 </body>
 </html>

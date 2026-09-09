@@ -3,44 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>일정공유 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <p><a th:href="@{/}">홈으로</a></p>
-    <h1>일정공유</h1>
-    <p><a th:href="@{/calendar/new}">+ 일정 추가</a></p>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('calendar')}"></div>
 
-    <div id="calendar"></div>
+    <main class="main">
+        <div class="topline">
+            <div>
+                <h1>일정공유</h1>
+                <p class="page-sub">전 직원이 함께 보는 캘린더입니다.</p>
+            </div>
+            <a class="btn btn-primary" th:href="@{/calendar/new}">+ 일정 추가</a>
+        </div>
 
-    <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'ko',
-                height: 'auto',
-                events: function (fetchInfo, successCallback, failureCallback) {
-                    var start = fetchInfo.start.toISOString().slice(0, 10);
-                    var end = fetchInfo.end.toISOString().slice(0, 10);
-                    fetch('/api/calendar/events?start=' + start + '&end=' + end)
-                        .then(function (res) { return res.json(); })
-                        .then(function (data) {
-                            successCallback(data.map(function (e) {
-                                return { id: e.id, title: e.title, start: e.start, end: e.end };
-                            }));
-                        })
-                        .catch(failureCallback);
-                },
-                dateClick: function (info) {
-                    window.location.href = '/calendar/new?date=' + info.dateStr;
-                },
-                eventClick: function (info) {
-                    window.location.href = '/calendar/' + info.event.id + '/edit';
-                }
+        <div class="cal-embed">
+            <div id="calendar"></div>
+        </div>
+
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                var style = getComputedStyle(document.documentElement);
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'ko',
+                    height: 'auto',
+                    eventColor: style.getPropertyValue('--blue').trim(),
+                    events: function (fetchInfo, successCallback, failureCallback) {
+                        var start = fetchInfo.start.toISOString().slice(0, 10);
+                        var end = fetchInfo.end.toISOString().slice(0, 10);
+                        fetch('/api/calendar/events?start=' + start + '&end=' + end)
+                            .then(function (res) { return res.json(); })
+                            .then(function (data) {
+                                successCallback(data.map(function (e) {
+                                    return { id: e.id, title: e.title, start: e.start, end: e.end };
+                                }));
+                            })
+                            .catch(failureCallback);
+                    },
+                    dateClick: function (info) {
+                        window.location.href = '/calendar/new?date=' + info.dateStr;
+                    },
+                    eventClick: function (info) {
+                        window.location.href = '/calendar/' + info.event.id + '/edit';
+                    }
+                });
+                calendar.render();
             });
-            calendar.render();
-        });
-    </script>
+        </script>
+    </main>
+</div>
 </body>
 </html>

@@ -3,36 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>일정 입력 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
 </head>
 <body>
-    <div th:replace="~{fragments/logo :: logo}"></div>
-    <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/calendar}">캘린더로</a></p>
-    <h1 th:text="${event.id} != null ? '일정 수정' : '일정 추가'">일정 추가</h1>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('calendar')}"></div>
 
-    <form th:action="${event.id} != null ? @{/calendar/{id}(id=${event.id})} : @{/calendar}"
-          th:object="${event}" method="post">
-        <div>
-            <label>제목</label>
-            <input type="text" th:field="*{title}" required style="width:100%" />
-        </div>
-        <div>
-            <label>설명</label>
-            <textarea th:field="*{description}" rows="4" style="width:100%"></textarea>
-        </div>
-        <div>
-            <label>시작</label>
-            <input type="datetime-local" th:field="*{startDateTime}" required />
-        </div>
-        <div>
-            <label>종료</label>
-            <input type="datetime-local" th:field="*{endDateTime}" required />
-        </div>
-        <button type="submit">저장</button>
-    </form>
+    <main class="main">
+        <div class="crumb"><a th:href="@{/calendar}">일정공유</a><span class="sep">/</span><span th:text="${event.id} != null ? '수정' : '추가'">추가</span></div>
+        <h1 th:text="${event.id} != null ? '일정 수정' : '일정 추가'">일정 추가</h1>
 
-    <form th:if="${event.id} != null" th:action="@{/calendar/{id}/delete(id=${event.id})}" method="post"
-          onsubmit="return confirm('삭제하시겠습니까?');">
-        <button type="submit">삭제</button>
-    </form>
+        <form class="form-card" th:action="${event.id} != null ? @{/calendar/{id}(id=${event.id})} : @{/calendar}"
+              th:object="${event}" method="post">
+            <div class="field">
+                <label>제목</label>
+                <input type="text" th:field="*{title}" required />
+            </div>
+            <div class="field">
+                <label>설명</label>
+                <textarea th:field="*{description}" rows="4"></textarea>
+            </div>
+            <div class="field">
+                <label>시작</label>
+                <input type="datetime-local" th:field="*{startDateTime}" required />
+            </div>
+            <div class="field">
+                <label>종료</label>
+                <input type="datetime-local" th:field="*{endDateTime}" required />
+            </div>
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a class="btn btn-ghost" th:href="@{/calendar}">취소</a>
+            </div>
+        </form>
+
+        <form th:if="${event.id} != null" th:action="@{/calendar/{id}/delete(id=${event.id})}" method="post"
+              onsubmit="return confirm('삭제하시겠습니까?');" style="margin-top:14px;">
+            <button type="submit" class="btn btn-danger">삭제</button>
+        </form>
+    </main>
+</div>
 </body>
 </html>
