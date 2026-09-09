@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>페이지를 찾을 수 없습니다 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <style>
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .error-card { text-align: center; max-width: 380px; }
+        .error-card img { height: 30px; margin-bottom: 26px; }
+        .error-card .code { font-size: 13px; color: var(--faint); letter-spacing: .1em; margin-bottom: 8px; }
+        .error-card h1 { font-size: 18px; margin: 0 0 10px; }
+        .error-card p { color: var(--muted); font-size: 13.5px; margin: 0 0 22px; }
+    </style>
+</head>
+<body>
+    <div class="error-card">
+        <img src="/img/logo.png" alt="한국미래안전" />
+        <div class="code num">404</div>
+        <h1>페이지를 찾을 수 없습니다</h1>
+        <p>요청하신 항목이 삭제되었거나 존재하지 않습니다.</p>
+        <a class="btn btn-primary" href="/">홈으로 돌아가기</a>
+    </div>
+</body>
+</html>
