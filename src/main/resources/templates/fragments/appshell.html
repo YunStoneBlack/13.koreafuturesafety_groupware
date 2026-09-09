@@ -3,9 +3,9 @@
 <head><link rel="stylesheet" th:href="@{/css/app.css}" /></head>
 <body>
 <aside class="sidebar" th:fragment="sidebar(active)">
-    <div class="brand">
+    <a class="brand" th:href="@{/}">
         <img th:src="@{/img/logo-white.png}" alt="한국미래안전" />
-    </div>
+    </a>
 
     <div class="nav-label">그룹웨어</div>
     <nav class="nav">
