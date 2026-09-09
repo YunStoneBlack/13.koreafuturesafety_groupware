@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>결재 요청 작성 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/approval}">목록으로</a></p>
+    <h1>결재 요청 작성</h1>
+
+    <form th:action="@{/approval}" th:object="${request}" method="post">
+        <div>
+            <label>구분</label>
+            <select th:field="*{type}">
+                <option th:each="t : ${types}" th:value="${t}" th:text="${t}">TYPE</option>
+            </select>
+        </div>
+        <div>
+            <label>제목</label>
+            <input type="text" th:field="*{title}" required style="width:100%" />
+        </div>
+        <div>
+            <label>내용</label>
+            <textarea th:field="*{content}" rows="8" style="width:100%" required></textarea>
+        </div>
+        <button type="submit">임시저장 (초안)</button>
+    </form>
+    <p>* 작성 후 상세 화면에서 "제출"을 눌러야 결재가 시작됩니다.</p>
+</body>
+</html>

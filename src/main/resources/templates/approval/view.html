@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${req.title}">결재 요청</title>
+</head>
+<body>
+    <p><a th:href="@{/approval}">목록으로</a></p>
+    <h1 th:text="${req.title}">제목</h1>
+    <p>
+        구분: <span th:text="${req.type}">TYPE</span> ·
+        기안자: <span th:text="${req.requester.displayName}">기안자</span> ·
+        상태: <span th:text="${req.status}">STATUS</span>
+    </p>
+    <div th:text="${req.content}" style="white-space: pre-wrap;">내용</div>
+
+    <div th:if="${req.status.name() == 'APPROVED' or req.status.name() == 'REJECTED'}">
+        <p>
+            처리자: <span th:text="${req.approver != null ? req.approver.displayName : ''}"></span> ·
+            처리일시: <span th:text="${req.decidedAt != null ? #temporals.format(req.decidedAt, 'yyyy-MM-dd HH:mm') : ''}"></span>
+        </p>
+        <p th:if="${req.approverComment != null and !req.approverComment.isEmpty()}">
+            코멘트: <span th:text="${req.approverComment}"></span>
+        </p>
+    </div>
+
+    <div th:if="${isOwner and req.status.name() == 'DRAFT'}">
+        <form th:action="@{/approval/{id}/submit(id=${req.id})}" method="post" style="display:inline">
+            <button type="submit">제출</button>
+        </form>
+        <form th:action="@{/approval/{id}/delete(id=${req.id})}" method="post" style="display:inline"
+              onsubmit="return confirm('삭제하시겠습니까?');">
+            <button type="submit">삭제</button>
+        </form>
+    </div>
+
+    <div th:if="${isAdmin and req.status.name() == 'SUBMITTED'}">
+        <form th:action="@{/approval/{id}/approve(id=${req.id})}" method="post">
+            <textarea name="comment" placeholder="코멘트(선택)" rows="2" style="width:100%"></textarea>
+            <button type="submit">승인</button>
+        </form>
+        <form th:action="@{/approval/{id}/reject(id=${req.id})}" method="post">
+            <textarea name="comment" placeholder="반려 사유(선택)" rows="2" style="width:100%"></textarea>
+            <button type="submit">반려</button>
+        </form>
+    </div>
+</body>
+</html>

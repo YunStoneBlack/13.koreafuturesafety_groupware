@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>전자결재 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/}">홈으로</a></p>
+    <h1>전자결재</h1>
+
+    <p><a th:href="@{/approval/new}">+ 결재 요청 작성</a></p>
+
+    <table border="1" cellpadding="6">
+        <thead>
+        <tr>
+            <th>구분</th>
+            <th>제목</th>
+            <th>기안자</th>
+            <th>상태</th>
+            <th>작성일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r : ${requests}">
+            <td th:text="${r.type}">구분</td>
+            <td><a th:href="@{/approval/{id}(id=${r.id})}" th:text="${r.title}">제목</a></td>
+            <td th:text="${r.requester.displayName}">기안자</td>
+            <td th:text="${r.status}">상태</td>
+            <td th:text="${#temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>
