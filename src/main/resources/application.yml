@@ -1,0 +1,25 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: groupware
+
+  datasource:
+    url: jdbc:h2:file:${GROUPWARE_DATA_DIR:./data}/groupware;AUTO_SERVER=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    show-sql: false
+
+  thymeleaf:
+    cache: false
+
+logging:
+  level:
+    org.springframework.security: INFO

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <h1>한국미래안전 그룹웨어</h1>
+    <p th:text="${username} + '님, 환영합니다.'">환영합니다.</p>
+    <ul>
+        <li>공지사항 (준비중)</li>
+        <li>전자결재 (준비중)</li>
+        <li>일정공유 (준비중)</li>
+        <li>직원정보 (준비중)</li>
+        <li>보고서 자동화 (준비중)</li>
+    </ul>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">로그아웃</button>
+    </form>
+</body>
+</html>
