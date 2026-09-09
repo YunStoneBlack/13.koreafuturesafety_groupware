@@ -76,7 +76,7 @@
                         <a class="action" th:href="@{/calendar}">캘린더 →</a>
                     </div>
                     <div class="rows">
-                        <a class="row" th:each="e : ${upcomingEvents}" th:href="@{/calendar}">
+                        <a class="row" th:each="e : ${upcomingEvents}" th:href="@{/calendar/{id}/edit(id=${e.id})}">
                             <span class="title" th:text="${e.title}">일정</span>
                             <span class="meta num" th:text="${#temporals.format(e.startDateTime, 'MM.dd HH:mm')}">일시</span>
                         </a>
