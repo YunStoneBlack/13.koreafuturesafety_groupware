@@ -5,6 +5,7 @@
     <title th:text="${post.title}">게시글</title>
 </head>
 <body>
+    <div th:replace="~{fragments/logo :: logo}"></div>
     <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/board}">목록으로</a></p>
     <h1 th:text="${post.title}">제목</h1>
     <p>

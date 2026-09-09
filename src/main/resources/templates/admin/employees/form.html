@@ -5,6 +5,7 @@
     <title>직원정보 입력 - 한국미래안전 그룹웨어</title>
 </head>
 <body>
+    <div th:replace="~{fragments/logo :: logo}"></div>
     <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/admin/employees}">목록으로</a></p>
     <h1 th:text="${employee.id} != null ? '직원 정보 수정' : '직원 추가'">직원 추가</h1>
 

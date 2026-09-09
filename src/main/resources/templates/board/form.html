@@ -5,6 +5,7 @@
     <title>글쓰기 - 한국미래안전 그룹웨어</title>
 </head>
 <body>
+    <div th:replace="~{fragments/logo :: logo}"></div>
     <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/board}">목록으로</a></p>
     <h1 th:text="${post.id} != null ? '글 수정' : '글쓰기'">글쓰기</h1>
 
