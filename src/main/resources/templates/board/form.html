@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>글쓰기 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/board}">목록으로</a></p>
+    <h1 th:text="${post.id} != null ? '글 수정' : '글쓰기'">글쓰기</h1>
+
+    <form th:action="${post.id} != null ? @{/board/{id}(id=${post.id})} : @{/board}"
+          th:object="${post}" method="post">
+        <div>
+            <label>제목</label>
+            <input type="text" th:field="*{title}" required style="width:100%" />
+        </div>
+        <div>
+            <label>내용</label>
+            <textarea th:field="*{content}" rows="10" style="width:100%" required></textarea>
+        </div>
+        <button type="submit">저장</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/}">홈으로</a></p>
+    <h1>공지사항 / 사내 게시판</h1>
+
+    <p><a th:href="@{/board/new}">+ 글쓰기</a></p>
+
+    <table border="1" cellpadding="6">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${posts}">
+            <td><a th:href="@{/board/{id}(id=${p.id})}" th:text="${p.title}">제목</a></td>
+            <td th:text="${p.author.displayName}">작성자</td>
+            <td th:text="${#temporals.format(p.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</td>
+            <td th:text="${p.viewCount}">0</td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>
