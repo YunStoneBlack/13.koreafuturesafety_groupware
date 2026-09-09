@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>일정 입력 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/calendar}">캘린더로</a></p>
+    <h1 th:text="${event.id} != null ? '일정 수정' : '일정 추가'">일정 추가</h1>
+
+    <form th:action="${event.id} != null ? @{/calendar/{id}(id=${event.id})} : @{/calendar}"
+          th:object="${event}" method="post">
+        <div>
+            <label>제목</label>
+            <input type="text" th:field="*{title}" required style="width:100%" />
+        </div>
+        <div>
+            <label>설명</label>
+            <textarea th:field="*{description}" rows="4" style="width:100%"></textarea>
+        </div>
+        <div>
+            <label>시작</label>
+            <input type="datetime-local" th:field="*{startDateTime}" required />
+        </div>
+        <div>
+            <label>종료</label>
+            <input type="datetime-local" th:field="*{endDateTime}" required />
+        </div>
+        <button type="submit">저장</button>
+    </form>
+
+    <form th:if="${event.id} != null" th:action="@{/calendar/{id}/delete(id=${event.id})}" method="post"
+          onsubmit="return confirm('삭제하시겠습니까?');">
+        <button type="submit">삭제</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>일정공유 - 한국미래안전 그룹웨어</title>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+</head>
+<body>
+    <p><a th:href="@{/}">홈으로</a></p>
+    <h1>일정공유</h1>
+    <p><a th:href="@{/calendar/new}">+ 일정 추가</a></p>
+
+    <div id="calendar"></div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ko',
+                height: 'auto',
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    var start = fetchInfo.start.toISOString().slice(0, 10);
+                    var end = fetchInfo.end.toISOString().slice(0, 10);
+                    fetch('/api/calendar/events?start=' + start + '&end=' + end)
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
+                            successCallback(data.map(function (e) {
+                                return { id: e.id, title: e.title, start: e.start, end: e.end };
+                            }));
+                        })
+                        .catch(failureCallback);
+                },
+                dateClick: function (info) {
+                    window.location.href = '/calendar/new?date=' + info.dateStr;
+                },
+                eventClick: function (info) {
+                    window.location.href = '/calendar/' + info.event.id + '/edit';
+                }
+            });
+            calendar.render();
+        });
+    </script>
+</body>
+</html>
