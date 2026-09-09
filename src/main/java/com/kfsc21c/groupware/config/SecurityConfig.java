@@ -24,12 +24,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/health", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/health", "/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/staff/**").hasRole("ADMIN")
                         .requestMatchers("/staff/new", "/staff/*/edit").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.defaultSuccessUrl("/", true))
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll()
+                )
                 .logout(logout -> logout.logoutSuccessUrl("/login?logout"));
 
         return http.build();
