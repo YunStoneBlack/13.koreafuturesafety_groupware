@@ -5,7 +5,7 @@
     <title th:text="${req.title}">결재 요청</title>
 </head>
 <body>
-    <p><a th:href="@{/approval}">목록으로</a></p>
+    <p><a th:href="@{/}">홈으로</a> | <a th:href="@{/approval}">목록으로</a></p>
     <h1 th:text="${req.title}">제목</h1>
     <p>
         구분: <span th:text="${req.type}">TYPE</span> ·
