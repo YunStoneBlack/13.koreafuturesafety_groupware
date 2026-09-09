@@ -12,5 +12,13 @@
         <li><a th:href="@{/admin/users}">계정 관리 (아이디/비밀번호)</a></li>
         <li><a th:href="@{/admin/employees}">직원정보 관리 (조직도 등록/수정/삭제)</a></li>
     </ul>
+
+    <p th:if="${param.backedUp}" style="color:green;">백업이 완료되었습니다.</p>
+    <form th:action="@{/admin/backup}" method="post">
+        <button type="submit">지금 백업 (데이터 스냅샷 생성)</button>
+    </form>
+    <p>매일 새벽 3시에 자동으로도 백업되며, 14일치가 지나면 오래된 것부터 자동 삭제됩니다.
+       백업 파일은 서버의 <code>~/groupware/backup/</code>에 쌓입니다 — 회사 PC로 옮기려면
+       이 폴더를 주기적으로 내려받으면 됩니다.</p>
 </body>
 </html>
