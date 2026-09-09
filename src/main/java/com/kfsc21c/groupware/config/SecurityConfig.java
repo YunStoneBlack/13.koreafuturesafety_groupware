@@ -3,17 +3,13 @@ package com.kfsc21c.groupware.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * 0단계(파이프라인 검증용) 임시 설정.
- * 실제 계정 로그인(auth 패키지, DB 기반 User/UserDetailsService)이 만들어지면
- * 이 인메모리 계정은 제거하고 교체한다.
+ * DB 기반 로그인 설정. 실제 계정 조회는 auth.CustomUserDetailsService가 담당하며,
+ * Spring Security가 이 클래스가 등록한 PasswordEncoder 빈과 함께 자동으로 엮는다.
  */
 @Configuration
 public class SecurityConfig {
@@ -21,16 +17,6 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("admin")
-                        .password(encoder.encode("changeme123"))
-                        .roles("ADMIN")
-                        .build()
-        );
     }
 
     @Bean

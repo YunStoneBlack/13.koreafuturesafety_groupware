@@ -4,13 +4,16 @@
 `https://www.kfsc21c.com/`(별도 소스 없는 fat jar)와는 완전히 분리된 별도 Spring Boot
 프로젝트이며, `groupware.kfsc21c.com` 서브도메인으로 배포된다.
 
-## 현재 단계: 0단계 (파이프라인 검증용 골격)
+## 현재 단계: 1단계 (DB 기반 로그인)
 
-- Spring Security 인메모리 임시 계정(`admin` / `changeme123`, role `ADMIN`) — DB 기반
-  계정(auth 패키지)이 만들어지면 교체 예정
+- `auth` 패키지: `User`(username/passwordHash/displayName/role/enabled), BCrypt,
+  `CustomUserDetailsService`
+- 최초 기동 시 계정이 하나도 없으면 `admin` 계정을 자동 생성(`config/DataSeeder`).
+  비밀번호는 `GROUPWARE_ADMIN_INITIAL_PASSWORD` 환경변수로 지정하거나, 지정 안 하면
+  무작위 생성 후 기동 로그에 한 번만 출력됨(재기동 시 계정이 이미 있으면 아무 것도 안 함)
 - `/health` — 헬스체크
-- `/` — 로그인 후 보이는 임시 홈 화면
-- H2 파일 DB (`${GROUPWARE_DATA_DIR:./data}/groupware`) 연결만 확인, 아직 엔티티 없음
+- `/` — 로그인 후 보이는 임시 홈 화면 (모듈 자리 표시만, 실제 기능은 다음 단계부터)
+- H2 파일 DB (`${GROUPWARE_DATA_DIR:./data}/groupware`)
 
 ## 빌드 (서버에서, 로컬 자바 툴체인 없음이 전제)
 
