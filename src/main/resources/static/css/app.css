@@ -86,7 +86,8 @@ h1 { font-size: 21px; font-weight: 700; margin: 0 0 4px; text-wrap: balance; }
 
 /* ---------- stat tiles ---------- */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 16px 14px; box-shadow: var(--shadow-card); }
+.stat { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 16px 14px; box-shadow: var(--shadow-card); transition: border-color .15s, transform .15s; }
+a.stat:hover { border-color: var(--blue); transform: translateY(-1px); }
 .stat .label { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
 .stat .value { font-size: 25px; font-weight: 600; letter-spacing: -0.01em; }
 .stat .value .unit { font-size: 13px; font-weight: 500; color: var(--muted); margin-left: 2px; }

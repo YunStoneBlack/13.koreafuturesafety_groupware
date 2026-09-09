@@ -20,22 +20,22 @@
         </div>
 
         <div class="stats">
-            <div class="stat">
+            <a class="stat" th:href="@{/approval}">
                 <div class="label">결재 대기</div>
                 <div class="value num" th:text="${pendingCount} + '건'">0건</div>
-            </div>
-            <div class="stat">
+            </a>
+            <a class="stat" th:href="@{/calendar}">
                 <div class="label">오늘 일정</div>
                 <div class="value num" th:text="${todayEventCount} + '건'">0건</div>
-            </div>
-            <div class="stat">
+            </a>
+            <a class="stat" th:href="@{/board}">
                 <div class="label">이번 주 공지</div>
                 <div class="value num" th:text="${weekPostCount} + '건'">0건</div>
-            </div>
-            <div class="stat">
+            </a>
+            <a class="stat" th:href="@{/staff}">
                 <div class="label">전체 직원</div>
                 <div class="value num" th:text="${employeeCount} + '명'">0명</div>
-            </div>
+            </a>
         </div>
 
         <div class="stats" style="grid-template-columns: 1.5fr 1fr; align-items: start;">
