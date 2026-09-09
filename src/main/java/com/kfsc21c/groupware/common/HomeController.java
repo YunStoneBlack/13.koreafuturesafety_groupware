@@ -7,6 +7,7 @@ import com.kfsc21c.groupware.board.Post;
 import com.kfsc21c.groupware.board.PostRepository;
 import com.kfsc21c.groupware.calendar.CalendarEvent;
 import com.kfsc21c.groupware.calendar.CalendarEventRepository;
+import com.kfsc21c.groupware.calendar.UpcomingEventView;
 import com.kfsc21c.groupware.staff.Employee;
 import com.kfsc21c.groupware.staff.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,7 @@ public class HomeController {
 
         model.addAttribute("recentPosts", posts.stream().limit(3).toList());
         model.addAttribute("pendingApprovals", pending.stream().limit(3).toList());
-        model.addAttribute("upcomingEvents", upcoming.stream().limit(3).toList());
+        model.addAttribute("upcomingEvents", upcoming.stream().limit(3).map(UpcomingEventView::from).toList());
         model.addAttribute("pendingCount", pending.size());
         model.addAttribute("todayEventCount", todayEvents);
         model.addAttribute("weekPostCount", weekPosts);

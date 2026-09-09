@@ -78,6 +78,7 @@
                     <div class="rows">
                         <a class="row" th:each="e : ${upcomingEvents}" th:href="@{/calendar/{id}/edit(id=${e.id})}">
                             <span class="title" th:text="${e.title}">일정</span>
+                            <span class="dday num" th:classappend="${e.ddayClass}" th:text="${e.ddayLabel}">D-0</span>
                             <span class="meta num" th:text="${#temporals.format(e.startDateTime, 'MM.dd HH:mm')}">일시</span>
                         </a>
                         <div class="empty-note" th:if="${#lists.isEmpty(upcomingEvents)}">예정된 일정이 없습니다.</div>
