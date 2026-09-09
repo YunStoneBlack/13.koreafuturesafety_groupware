@@ -2,11 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>직원정보 - 한국미래안전 그룹웨어</title>
+    <title>직원정보 관리 - 한국미래안전 그룹웨어</title>
 </head>
 <body>
-    <p><a th:href="@{/}">홈으로</a></p>
-    <h1>직원정보 (조직도)</h1>
+    <p><a th:href="@{/admin}">관리자 메뉴로</a></p>
+    <h1>직원정보 관리</h1>
+
+    <p><a th:href="@{/admin/employees/new}">+ 직원 추가</a></p>
 
     <table border="1" cellpadding="6">
         <thead>
@@ -16,6 +18,7 @@
             <th>직급</th>
             <th>연락처</th>
             <th>이메일</th>
+            <th>관리</th>
         </tr>
         </thead>
         <tbody>
@@ -25,6 +28,13 @@
             <td th:text="${e.position}">직급</td>
             <td th:text="${e.phone}">연락처</td>
             <td th:text="${e.email}">이메일</td>
+            <td>
+                <a th:href="@{/admin/employees/{id}/edit(id=${e.id})}">수정</a>
+                <form th:action="@{/admin/employees/{id}/delete(id=${e.id})}" method="post" style="display:inline"
+                      onsubmit="return confirm('삭제하시겠습니까?');">
+                    <button type="submit">삭제</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>

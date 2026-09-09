@@ -5,10 +5,10 @@
     <title>직원정보 입력 - 한국미래안전 그룹웨어</title>
 </head>
 <body>
-    <p><a th:href="@{/staff}">목록으로</a></p>
+    <p><a th:href="@{/admin/employees}">목록으로</a></p>
     <h1 th:text="${employee.id} != null ? '직원 정보 수정' : '직원 추가'">직원 추가</h1>
 
-    <form th:action="${employee.id} != null ? @{/staff/{id}(id=${employee.id})} : @{/staff}"
+    <form th:action="${employee.id} != null ? @{/admin/employees/{id}(id=${employee.id})} : @{/admin/employees}"
           th:object="${employee}" method="post">
         <div>
             <label>이름</label>

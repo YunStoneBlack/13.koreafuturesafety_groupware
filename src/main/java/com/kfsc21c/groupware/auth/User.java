@@ -1,10 +1,14 @@
 package com.kfsc21c.groupware.auth;
 
 import com.kfsc21c.groupware.common.BaseEntity;
+import com.kfsc21c.groupware.staff.Employee;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,4 +41,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private boolean enabled = true;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id", unique = true)
+    private Employee employee;
 }

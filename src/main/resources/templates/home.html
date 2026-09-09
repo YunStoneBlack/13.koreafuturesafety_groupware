@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>한국미래안전 그룹웨어</title>
@@ -13,6 +13,7 @@
         <li><a th:href="@{/calendar}">일정공유</a></li>
         <li><a th:href="@{/staff}">직원정보</a></li>
         <li><a th:href="@{/report}">보고서 자동화</a></li>
+        <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}">관리자 메뉴</a></li>
     </ul>
     <form th:action="@{/logout}" method="post">
         <button type="submit">로그아웃</button>

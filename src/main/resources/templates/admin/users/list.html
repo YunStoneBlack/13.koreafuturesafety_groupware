@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>계정 관리 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/admin}">관리자 메뉴로</a></p>
+    <h1>계정 관리</h1>
+
+    <p><a th:href="@{/admin/users/new}">+ 계정 추가</a></p>
+
+    <table border="1" cellpadding="6">
+        <thead>
+        <tr>
+            <th>아이디</th>
+            <th>이름</th>
+            <th>연결된 직원</th>
+            <th>권한</th>
+            <th>사용여부</th>
+            <th>관리</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.username}">아이디</td>
+            <td th:text="${u.displayName}">이름</td>
+            <td th:text="${u.employee != null ? u.employee.name : '-'}">-</td>
+            <td th:text="${u.role}">ROLE</td>
+            <td th:text="${u.enabled ? '사용' : '중지'}">사용</td>
+            <td>
+                <a th:href="@{/admin/users/{id}/edit(id=${u.id})}">수정</a>
+                <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post" style="display:inline"
+                      onsubmit="return confirm('삭제하시겠습니까?');">
+                    <button type="submit">삭제</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>

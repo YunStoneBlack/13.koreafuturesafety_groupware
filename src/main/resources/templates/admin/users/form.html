@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>계정 입력 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/admin/users}">목록으로</a></p>
+    <h1 th:text="${userId} != null ? '계정 수정' : '계정 추가'">계정 추가</h1>
+
+    <p th:if="${error}" style="color:red;" th:text="${error}">에러</p>
+
+    <form th:action="${userId} != null ? @{/admin/users/{id}(id=${userId})} : @{/admin/users}"
+          th:object="${form}" method="post">
+        <div>
+            <label>아이디</label>
+            <input type="text" th:field="*{username}" th:readonly="${userId} != null" required />
+            <span th:if="${userId} != null">(아이디는 수정할 수 없습니다)</span>
+        </div>
+        <div>
+            <label>비밀번호</label>
+            <input type="password" th:field="*{password}" th:required="${userId} == null" />
+            <span th:if="${userId} != null">(변경하지 않으려면 비워두세요)</span>
+        </div>
+        <div>
+            <label>이름</label>
+            <input type="text" th:field="*{displayName}" required />
+        </div>
+        <div>
+            <label>권한</label>
+            <select th:field="*{role}">
+                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">ROLE</option>
+            </select>
+        </div>
+        <div>
+            <label>연결된 직원(선택)</label>
+            <select th:field="*{employeeId}">
+                <option value="">- 선택 안함 -</option>
+                <option th:each="emp : ${employees}" th:value="${emp.id}" th:text="${emp.name} + ' (' + ${emp.department} + ')'">직원</option>
+            </select>
+        </div>
+        <div>
+            <label>
+                <input type="checkbox" th:field="*{enabled}" />
+                사용 가능
+            </label>
+        </div>
+        <button type="submit">저장</button>
+    </form>
+</body>
+</html>
