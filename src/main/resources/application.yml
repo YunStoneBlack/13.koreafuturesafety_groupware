@@ -26,6 +26,10 @@ spring:
   thymeleaf:
     cache: false
 
+  mvc:
+    locale: ko_KR
+    locale-resolver: fixed
+
 logging:
   level:
     org.springframework.security: INFO
