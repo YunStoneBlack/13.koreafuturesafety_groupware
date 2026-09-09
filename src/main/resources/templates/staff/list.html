@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>직원정보 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/}">홈으로</a></p>
+    <h1>직원정보 (주소록/조직도)</h1>
+
+    <p sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/staff/new}">+ 직원 추가</a>
+    </p>
+
+    <table border="1" cellpadding="6">
+        <thead>
+        <tr>
+            <th>이름</th>
+            <th>부서</th>
+            <th>직급</th>
+            <th>연락처</th>
+            <th>이메일</th>
+            <th sec:authorize="hasRole('ADMIN')">관리</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${employees}">
+            <td th:text="${e.name}">이름</td>
+            <td th:text="${e.department}">부서</td>
+            <td th:text="${e.position}">직급</td>
+            <td th:text="${e.phone}">연락처</td>
+            <td th:text="${e.email}">이메일</td>
+            <td sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/staff/{id}/edit(id=${e.id})}">수정</a>
+                <form th:action="@{/staff/{id}/delete(id=${e.id})}" method="post" style="display:inline"
+                      onsubmit="return confirm('삭제하시겠습니까?');">
+                    <button type="submit">삭제</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>

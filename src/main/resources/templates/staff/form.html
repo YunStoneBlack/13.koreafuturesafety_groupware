@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>직원정보 입력 - 한국미래안전 그룹웨어</title>
+</head>
+<body>
+    <p><a th:href="@{/staff}">목록으로</a></p>
+    <h1 th:text="${employee.id} != null ? '직원 정보 수정' : '직원 추가'">직원 추가</h1>
+
+    <form th:action="${employee.id} != null ? @{/staff/{id}(id=${employee.id})} : @{/staff}"
+          th:object="${employee}" method="post">
+        <div>
+            <label>이름</label>
+            <input type="text" th:field="*{name}" required />
+        </div>
+        <div>
+            <label>부서</label>
+            <input type="text" th:field="*{department}" required />
+        </div>
+        <div>
+            <label>직급</label>
+            <input type="text" th:field="*{position}" />
+        </div>
+        <div>
+            <label>연락처</label>
+            <input type="text" th:field="*{phone}" />
+        </div>
+        <div>
+            <label>이메일</label>
+            <input type="email" th:field="*{email}" />
+        </div>
+        <button type="submit">저장</button>
+    </form>
+</body>
+</html>
