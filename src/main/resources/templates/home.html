@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>한국미래안전 그룹웨어</title>
     <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 </head>
 <body>
 <div class="app">
@@ -98,7 +99,50 @@
                 </div>
             </div>
         </div>
+
+        <div class="panel">
+            <div class="panel-head">
+                <h2>이번 달 캘린더</h2>
+                <a class="action" th:href="@{/calendar}">전체화면 캘린더 →</a>
+            </div>
+            <div class="panel-body">
+                <div id="home-calendar"></div>
+            </div>
+        </div>
     </main>
 </div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var style = getComputedStyle(document.documentElement);
+        var calendarEl = document.getElementById('home-calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            height: 560,
+            headerToolbar: { left: 'title', center: '', right: 'prev,next today' },
+            eventColor: style.getPropertyValue('--blue').trim(),
+            events: function (fetchInfo, successCallback, failureCallback) {
+                var start = fetchInfo.start.toISOString().slice(0, 10);
+                var end = fetchInfo.end.toISOString().slice(0, 10);
+                fetch('/api/calendar/events?start=' + start + '&end=' + end)
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        successCallback(data.map(function (e) {
+                            return { id: e.id, title: e.title, start: e.start, end: e.end };
+                        }));
+                    })
+                    .catch(failureCallback);
+            },
+            dateClick: function (info) {
+                window.location.href = '/calendar/new?date=' + info.dateStr;
+            },
+            eventClick: function (info) {
+                window.location.href = '/calendar/' + info.event.id + '/edit';
+            }
+        });
+        calendar.render();
+    });
+</script>
 </body>
 </html>
