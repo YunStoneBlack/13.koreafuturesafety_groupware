@@ -9,6 +9,7 @@
 
     <p th:if="${param.error}" style="color:red;">아이디 또는 비밀번호가 올바르지 않습니다.</p>
     <p th:if="${param.logout}" style="color:green;">로그아웃되었습니다.</p>
+    <p th:if="${param.renamed}" style="color:green;">아이디가 변경되었습니다. 새 아이디로 다시 로그인해주세요.</p>
 
     <form id="loginForm" th:action="@{/login}" method="post" autocomplete="on">
         <div>

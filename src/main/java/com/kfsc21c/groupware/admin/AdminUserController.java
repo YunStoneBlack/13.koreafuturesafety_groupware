@@ -5,9 +5,11 @@ import com.kfsc21c.groupware.auth.User;
 import com.kfsc21c.groupware.auth.UserRepository;
 import com.kfsc21c.groupware.staff.Employee;
 import com.kfsc21c.groupware.staff.EmployeeRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -91,10 +93,33 @@ public class AdminUserController {
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id, @ModelAttribute("form") UserAccountForm form) {
+    public String update(@PathVariable Long id, @ModelAttribute("form") UserAccountForm form,
+                          @AuthenticationPrincipal UserDetails principal, Model model,
+                          HttpServletRequest request) {
         User user = userRepository.findByIdWithEmployee(id)
                 .orElseThrow(() -> new IllegalArgumentException("계정을 찾을 수 없습니다: " + id));
 
+        String newUsername = form.getUsername() == null ? "" : form.getUsername().trim();
+        boolean usernameChanged = !newUsername.equals(user.getUsername());
+
+        if (newUsername.isBlank()) {
+            model.addAttribute("error", "아이디는 비워둘 수 없습니다.");
+            model.addAttribute("userId", id);
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("employees", employeeRepository.findAll());
+            return "admin/users/form";
+        }
+        if (usernameChanged && userRepository.existsByUsername(newUsername)) {
+            model.addAttribute("error", "이미 존재하는 아이디입니다.");
+            model.addAttribute("userId", id);
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("employees", employeeRepository.findAll());
+            return "admin/users/form";
+        }
+
+        boolean renamedSelf = usernameChanged && user.getUsername().equals(principal.getUsername());
+
+        user.setUsername(newUsername);
         user.setDisplayName(form.getDisplayName());
         user.setRole(form.getRole());
         user.setEnabled(form.isEnabled());
@@ -108,6 +133,16 @@ public class AdminUserController {
             user.setEmployee(null);
         }
         userRepository.save(user);
+
+        // 본인 아이디를 바꾼 경우 현재 세션은 예전 아이디로 인증된 상태라 그대로 두면
+        // DB와 어긋난다 - 세션을 직접 무효화해서 새 아이디로 다시 로그인하게 한다.
+        // (POST /logout으로 redirect하면 브라우저가 GET으로 따라가서 매핑이 안 잡히므로
+        // 세션 무효화를 여기서 직접 처리한다.)
+        if (renamedSelf) {
+            SecurityContextHolder.clearContext();
+            request.getSession().invalidate();
+            return "redirect:/login?renamed";
+        }
         return "redirect:/admin/users";
     }
 
