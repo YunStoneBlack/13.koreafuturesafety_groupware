@@ -10,11 +10,11 @@
     <div th:replace="~{fragments/appshell :: sidebar('calendar')}"></div>
 
     <main class="main">
-        <div class="crumb"><a th:href="@{/calendar}">일정공유</a><span class="sep">/</span><span th:text="${event.id} != null ? '수정' : '추가'">추가</span></div>
-        <h1 th:text="${event.id} != null ? '일정 수정' : '일정 추가'">일정 추가</h1>
+        <div class="crumb"><a th:href="@{/calendar}">일정공유</a><span class="sep">/</span><span th:text="${form.id} != null ? '수정' : '추가'">추가</span></div>
+        <h1 th:text="${form.id} != null ? '일정 수정' : '일정 추가'">일정 추가</h1>
 
-        <form class="form-card" th:action="${event.id} != null ? @{/calendar/{id}(id=${event.id})} : @{/calendar}"
-              th:object="${event}" method="post">
+        <form class="form-card" th:action="${form.id} != null ? @{/calendar/{id}(id=${form.id})} : @{/calendar}"
+              th:object="${form}" method="post">
             <div class="field">
                 <label>제목</label>
                 <input type="text" th:field="*{title}" required />
@@ -23,21 +23,34 @@
                 <label>설명</label>
                 <textarea th:field="*{description}" rows="4"></textarea>
             </div>
-            <div class="field">
-                <label>시작</label>
-                <input type="datetime-local" th:field="*{startDateTime}" required />
+            <div class="field-row">
+                <div class="field">
+                    <label>시작 날짜</label>
+                    <input type="date" th:field="*{startDate}" required />
+                </div>
+                <div class="field">
+                    <label>시작 시간</label>
+                    <input type="time" th:field="*{startTime}" lang="en-GB" required />
+                </div>
             </div>
-            <div class="field">
-                <label>종료</label>
-                <input type="datetime-local" th:field="*{endDateTime}" required />
+            <div class="field-row">
+                <div class="field">
+                    <label>종료 날짜</label>
+                    <input type="date" th:field="*{endDate}" required />
+                </div>
+                <div class="field">
+                    <label>종료 시간</label>
+                    <input type="time" th:field="*{endTime}" lang="en-GB" required />
+                </div>
             </div>
+            <div class="hint" style="margin: -6px 0 16px;">시간 칸을 클릭한 뒤 숫자를 직접 입력할 수도 있습니다 (예: 0930). 00:00~23:59 사이 24시간 표기입니다.</div>
             <div class="btn-row">
                 <button type="submit" class="btn btn-primary">저장</button>
                 <a class="btn btn-ghost" th:href="@{/calendar}">취소</a>
             </div>
         </form>
 
-        <form th:if="${event.id} != null" th:action="@{/calendar/{id}/delete(id=${event.id})}" method="post"
+        <form th:if="${form.id} != null" th:action="@{/calendar/{id}/delete(id=${form.id})}" method="post"
               onsubmit="return confirm('삭제하시겠습니까?');" style="margin-top:14px;">
             <button type="submit" class="btn btn-danger">삭제</button>
         </form>

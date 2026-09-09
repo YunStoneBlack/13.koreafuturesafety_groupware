@@ -119,10 +119,13 @@ a.stat:hover { border-color: var(--blue); transform: translateY(-1px); }
 /* ---------- forms ---------- */
 .form-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-card); padding: 24px 26px; max-width: 640px; }
 .field { margin-bottom: 16px; }
+.field-row { display: flex; gap: 14px; }
+.field-row .field { flex: 1; }
 .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--ink); }
 .field .hint { font-size: 12px; color: var(--faint); margin-top: 5px; }
 .field input[type="text"], .field input[type="email"], .field input[type="password"],
-.field input[type="tel"], .field input[type="datetime-local"], .field select, .field textarea {
+.field input[type="tel"], .field input[type="datetime-local"], .field input[type="date"],
+.field input[type="time"], .field select, .field textarea {
   width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px;
   background: var(--paper); color: var(--ink); font: inherit; font-size: 13.5px;
 }

@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Controller
 @RequestMapping("/calendar")
@@ -46,23 +47,29 @@ public class CalendarController {
 
     @GetMapping("/new")
     public String newForm(@RequestParam(required = false)
-                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) java.time.LocalDate date,
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                            Model model) {
-        CalendarEvent event = new CalendarEvent();
-        if (date != null) {
-            event.setStartDateTime(date.atTime(9, 0));
-            event.setEndDateTime(date.atTime(10, 0));
-        }
-        model.addAttribute("event", event);
+        LocalDate day = date != null ? date : LocalDate.now();
+        CalendarEventForm form = new CalendarEventForm();
+        form.setStartDate(day);
+        form.setStartTime(LocalTime.of(9, 0));
+        form.setEndDate(day);
+        form.setEndTime(LocalTime.of(10, 0));
+        model.addAttribute("form", form);
         return "calendar/form";
     }
 
     @PostMapping
-    public String create(@Valid @ModelAttribute CalendarEvent event, BindingResult result,
-                          @AuthenticationPrincipal UserDetails principal, Model model) {
+    public String create(@Valid @ModelAttribute("form") CalendarEventForm form, BindingResult result,
+                          @AuthenticationPrincipal UserDetails principal) {
         if (result.hasErrors()) {
             return "calendar/form";
         }
+        CalendarEvent event = new CalendarEvent();
+        event.setTitle(form.getTitle());
+        event.setDescription(form.getDescription());
+        event.setStartDateTime(form.startDateTime());
+        event.setEndDateTime(form.endDateTime());
         event.setCreator(currentUser(principal));
         calendarEventRepository.save(event);
         return "redirect:/calendar";
@@ -75,12 +82,12 @@ public class CalendarController {
         if (!canManage(event, principal)) {
             throw new AccessDeniedException("이 일정을 수정할 권한이 없습니다");
         }
-        model.addAttribute("event", event);
+        model.addAttribute("form", CalendarEventForm.from(event));
         return "calendar/form";
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id, @Valid @ModelAttribute CalendarEvent form, BindingResult result,
+    public String update(@PathVariable Long id, @Valid @ModelAttribute("form") CalendarEventForm form, BindingResult result,
                           @AuthenticationPrincipal UserDetails principal) {
         CalendarEvent event = calendarEventRepository.findByIdWithCreator(id)
                 .orElseThrow(() -> new IllegalArgumentException("일정을 찾을 수 없습니다: " + id));
@@ -92,8 +99,8 @@ public class CalendarController {
         }
         event.setTitle(form.getTitle());
         event.setDescription(form.getDescription());
-        event.setStartDateTime(form.getStartDateTime());
-        event.setEndDateTime(form.getEndDateTime());
+        event.setStartDateTime(form.startDateTime());
+        event.setEndDateTime(form.endDateTime());
         calendarEventRepository.save(event);
         return "redirect:/calendar";
     }
