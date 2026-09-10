@@ -29,9 +29,11 @@ function initGroupwareCalendar(elId, fcOptions) {
         var editTitle = document.getElementById('editEventTitle');
         var editDesc = document.getElementById('editEventDescription');
         var editStartDate = document.getElementById('editEventStartDate');
-        var editStartTime = document.getElementById('editEventStartTime');
+        var editStartHour = document.getElementById('editEventStartHour');
+        var editStartMinute = document.getElementById('editEventStartMinute');
         var editEndDate = document.getElementById('editEventEndDate');
-        var editEndTime = document.getElementById('editEventEndTime');
+        var editEndHour = document.getElementById('editEventEndHour');
+        var editEndMinute = document.getElementById('editEventEndMinute');
         var editDeleteBtn = document.getElementById('editEventDeleteBtn');
         var currentEditEventId = null;
 
@@ -40,9 +42,11 @@ function initGroupwareCalendar(elId, fcOptions) {
         var newTitle = document.getElementById('newEventTitle');
         var newDesc = document.getElementById('newEventDescription');
         var newStartDate = document.getElementById('newEventStartDate');
-        var newStartTime = document.getElementById('newEventStartTime');
+        var newStartHour = document.getElementById('newEventStartHour');
+        var newStartMinute = document.getElementById('newEventStartMinute');
         var newEndDate = document.getElementById('newEventEndDate');
-        var newEndTime = document.getElementById('newEventEndTime');
+        var newEndHour = document.getElementById('newEventEndHour');
+        var newEndMinute = document.getElementById('newEventEndMinute');
 
         function pad(n) { return n < 10 ? '0' + n : '' + n; }
         function toDateStr(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
@@ -54,6 +58,47 @@ function initGroupwareCalendar(elId, fcOptions) {
         function timeRangeKorean(startIso, endIso) {
             return timeKorean(startIso.slice(11, 16)) + ' ~ ' + timeKorean(endIso.slice(11, 16));
         }
+
+        // ---------- 시/분 드롭다운(00~23시, 10분 단위) ----------
+        function populateHourMinute(hourEl, minuteEl) {
+            for (var h = 0; h < 24; h++) {
+                var opt = document.createElement('option');
+                opt.value = pad(h); opt.textContent = pad(h);
+                hourEl.appendChild(opt);
+            }
+            [0, 10, 20, 30, 40, 50].forEach(function (m) {
+                var opt = document.createElement('option');
+                opt.value = pad(m); opt.textContent = pad(m);
+                minuteEl.appendChild(opt);
+            });
+        }
+        [[newStartHour, newStartMinute], [newEndHour, newEndMinute],
+         [editStartHour, editStartMinute], [editEndHour, editEndMinute]].forEach(function (pair) {
+            populateHourMinute(pair[0], pair[1]);
+        });
+
+        function snapMinute(m) { return pad(Math.round(m / 10) * 10 % 60); }
+
+        // 시작 시간이 바뀌어 종료 시간보다 같거나 늦어지면, 종료를 시작+1시간으로 자동으로
+        // 채워준다(그 뒤에 사용자가 종료 시간을 직접 다시 고치는 건 자유).
+        function wireAutoBumpEnd(startDateEl, startHourEl, startMinuteEl, endDateEl, endHourEl, endMinuteEl) {
+            function bump() {
+                if (!startDateEl.value || !endDateEl.value) return;
+                var start = new Date(startDateEl.value + 'T' + startHourEl.value + ':' + startMinuteEl.value + ':00');
+                var end = new Date(endDateEl.value + 'T' + endHourEl.value + ':' + endMinuteEl.value + ':00');
+                if (end <= start) {
+                    var bumped = new Date(start.getTime() + 60 * 60000);
+                    endDateEl.value = toDateStr(bumped);
+                    endHourEl.value = pad(bumped.getHours());
+                    endMinuteEl.value = pad(bumped.getMinutes());
+                }
+            }
+            [startDateEl, startHourEl, startMinuteEl].forEach(function (el) {
+                el.addEventListener('change', bump);
+            });
+        }
+        wireAutoBumpEnd(newStartDate, newStartHour, newStartMinute, newEndDate, newEndHour, newEndMinute);
+        wireAutoBumpEnd(editStartDate, editStartHour, editStartMinute, editEndDate, editEndHour, editEndMinute);
 
         // ---------- 모달 드래그 이동 ----------
         function makeDraggable(panelEl) {
@@ -103,9 +148,11 @@ function initGroupwareCalendar(elId, fcOptions) {
             editTitle.value = ev.title;
             editDesc.value = ev.description || '';
             editStartDate.value = ev.start.slice(0, 10);
-            editStartTime.value = ev.start.slice(11, 16);
+            editStartHour.value = ev.start.slice(11, 13);
+            editStartMinute.value = snapMinute(parseInt(ev.start.slice(14, 16), 10));
             editEndDate.value = ev.end.slice(0, 10);
-            editEndTime.value = ev.end.slice(11, 16);
+            editEndHour.value = ev.end.slice(11, 13);
+            editEndMinute.value = snapMinute(parseInt(ev.end.slice(14, 16), 10));
             detailOverlay.classList.remove('open');
             resetPosition(editOverlay);
             editOverlay.classList.add('open');
@@ -120,9 +167,9 @@ function initGroupwareCalendar(elId, fcOptions) {
             params.set('title', editTitle.value);
             params.set('description', editDesc.value);
             params.set('startDate', editStartDate.value);
-            params.set('startTime', editStartTime.value);
+            params.set('startTime', editStartHour.value + ':' + editStartMinute.value);
             params.set('endDate', editEndDate.value);
-            params.set('endTime', editEndTime.value);
+            params.set('endTime', editEndHour.value + ':' + editEndMinute.value);
             params.set(csrfParam, csrfToken);
 
             fetch('/calendar/' + currentEditEventId, { method: 'POST', body: params })
@@ -160,9 +207,11 @@ function initGroupwareCalendar(elId, fcOptions) {
         function openNewEventModal(dateStr) {
             newForm.reset();
             newStartDate.value = dateStr;
-            newStartTime.value = '09:00';
+            newStartHour.value = '09';
+            newStartMinute.value = '00';
             newEndDate.value = dateStr;
-            newEndTime.value = '10:00';
+            newEndHour.value = '10';
+            newEndMinute.value = '00';
             resetPosition(newOverlay);
             newOverlay.classList.add('open');
         }
@@ -175,9 +224,9 @@ function initGroupwareCalendar(elId, fcOptions) {
             params.set('title', newTitle.value);
             params.set('description', newDesc.value);
             params.set('startDate', newStartDate.value);
-            params.set('startTime', newStartTime.value);
+            params.set('startTime', newStartHour.value + ':' + newStartMinute.value);
             params.set('endDate', newEndDate.value);
-            params.set('endTime', newEndTime.value);
+            params.set('endTime', newEndHour.value + ':' + newEndMinute.value);
             params.set(csrfParam, csrfToken);
 
             fetch('/calendar', { method: 'POST', body: params })
