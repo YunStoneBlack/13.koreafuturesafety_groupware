@@ -27,10 +27,11 @@
                 <div class="label">결재 대기</div>
                 <div class="value num" th:text="${pendingCount} + '건'">0건</div>
             </a>
-            <a class="stat" th:href="@{/calendar}">
+            <div class="stat clickable" id="todayStatCard"
+                 th:attr="data-today=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
                 <div class="label">오늘 일정</div>
                 <div class="value num" th:text="${todayEventCount} + '건'">0건</div>
-            </a>
+            </div>
             <a class="stat" th:href="@{/board}">
                 <div class="label">이번 주 공지</div>
                 <div class="value num" th:text="${weekPostCount} + '건'">0건</div>
@@ -120,6 +121,11 @@
             initGroupwareCalendar('home-calendar', {
                 height: 560,
                 headerToolbar: { left: 'title', center: '', right: 'prev,next today' }
+            });
+            document.getElementById('todayStatCard').addEventListener('click', function () {
+                if (window.openGroupwareDayModal) {
+                    window.openGroupwareDayModal(this.getAttribute('data-today'));
+                }
             });
         </script>
     </main>
