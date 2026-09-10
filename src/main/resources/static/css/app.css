@@ -201,6 +201,7 @@ form.inline { display: inline; }
 .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number { color: var(--blue); font-weight: 700; }
 .fc .fc-daygrid-day-frame { cursor: pointer; }
 .fc .fc-daygrid-day:not(.fc-day-today):hover { background-color: var(--paper); }
+.fc .fc-daygrid-dot-event:hover, .fc-daygrid-event.fc-event:hover { background: transparent; }
 .fc .fc-daygrid-dot-event { flex-wrap: wrap; align-items: center; }
 .fc .fc-daygrid-dot-event .fc-event-title { flex-basis: 100%; margin-top: 1px; padding-left: 14px; }
 

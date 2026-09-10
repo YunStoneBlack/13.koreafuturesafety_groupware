@@ -21,7 +21,19 @@ function initGroupwareCalendar(elId, fcOptions) {
         var detailTitleEl = document.getElementById('eventDetailTitle');
         var detailTimeEl = document.getElementById('eventDetailTime');
         var detailDescEl = document.getElementById('eventDetailDescription');
-        var detailEditLink = document.getElementById('eventDetailEditLink');
+        var detailEditBtn = document.getElementById('eventDetailEditBtn');
+        var currentDetailEvent = null;
+
+        var editOverlay = document.getElementById('editEventOverlay');
+        var editForm = document.getElementById('editEventForm');
+        var editTitle = document.getElementById('editEventTitle');
+        var editDesc = document.getElementById('editEventDescription');
+        var editStartDate = document.getElementById('editEventStartDate');
+        var editStartTime = document.getElementById('editEventStartTime');
+        var editEndDate = document.getElementById('editEventEndDate');
+        var editEndTime = document.getElementById('editEventEndTime');
+        var editDeleteBtn = document.getElementById('editEventDeleteBtn');
+        var currentEditEventId = null;
 
         var newOverlay = document.getElementById('newEventOverlay');
         var newForm = document.getElementById('newEventForm');
@@ -66,24 +78,83 @@ function initGroupwareCalendar(elId, fcOptions) {
                 document.body.style.userSelect = '';
             });
         }
-        [dayOverlay, detailOverlay, newOverlay].forEach(function (overlay) {
+        [dayOverlay, detailOverlay, newOverlay, editOverlay].forEach(function (overlay) {
             if (overlay) makeDraggable(overlay.querySelector('.day-modal'));
         });
         function resetPosition(overlay) { overlay.querySelector('.day-modal').style.transform = ''; }
 
         // ---------- 일정 상세 모달 ----------
         function openEventDetail(ev) {
+            currentDetailEvent = ev;
             detailTitleEl.textContent = ev.title;
             var startParts = ev.start.split('-');
             var dateLabel = parseInt(startParts[1], 10) + '월 ' + parseInt(startParts[2].slice(0, 2), 10) + '일';
             detailTimeEl.textContent = dateLabel + ' · ' + timeRangeKorean(ev.start, ev.end);
             detailDescEl.textContent = ev.description ? ev.description : '설명이 없습니다.';
-            detailEditLink.href = '/calendar/' + ev.id + '/edit';
             resetPosition(detailOverlay);
             detailOverlay.classList.add('open');
         }
         document.getElementById('eventDetailClose').addEventListener('click', function () { detailOverlay.classList.remove('open'); });
         detailOverlay.addEventListener('click', function (e) { if (e.target === detailOverlay) detailOverlay.classList.remove('open'); });
+
+        // ---------- 일정 수정 모달 ----------
+        function openEditEventModal(ev) {
+            currentEditEventId = ev.id;
+            editTitle.value = ev.title;
+            editDesc.value = ev.description || '';
+            editStartDate.value = ev.start.slice(0, 10);
+            editStartTime.value = ev.start.slice(11, 16);
+            editEndDate.value = ev.end.slice(0, 10);
+            editEndTime.value = ev.end.slice(11, 16);
+            detailOverlay.classList.remove('open');
+            resetPosition(editOverlay);
+            editOverlay.classList.add('open');
+        }
+        detailEditBtn.addEventListener('click', function () { if (currentDetailEvent) openEditEventModal(currentDetailEvent); });
+        document.getElementById('editEventClose').addEventListener('click', function () { editOverlay.classList.remove('open'); });
+        editOverlay.addEventListener('click', function (e) { if (e.target === editOverlay) editOverlay.classList.remove('open'); });
+
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var params = new URLSearchParams();
+            params.set('title', editTitle.value);
+            params.set('description', editDesc.value);
+            params.set('startDate', editStartDate.value);
+            params.set('startTime', editStartTime.value);
+            params.set('endDate', editEndDate.value);
+            params.set('endTime', editEndTime.value);
+            params.set(csrfParam, csrfToken);
+
+            fetch('/calendar/' + currentEditEventId, { method: 'POST', body: params })
+                .then(function (res) {
+                    if (res.ok) {
+                        editOverlay.classList.remove('open');
+                        dayOverlay.classList.remove('open');
+                        calendar.refetchEvents();
+                    } else {
+                        alert('저장에 실패했습니다. 입력값을 확인해주세요.');
+                    }
+                })
+                .catch(function () { alert('저장 중 오류가 발생했습니다.'); });
+        });
+
+        editDeleteBtn.addEventListener('click', function () {
+            if (!currentEditEventId) return;
+            if (!confirm('삭제하시겠습니까?')) return;
+            var params = new URLSearchParams();
+            params.set(csrfParam, csrfToken);
+            fetch('/calendar/' + currentEditEventId + '/delete', { method: 'POST', body: params })
+                .then(function (res) {
+                    if (res.ok) {
+                        editOverlay.classList.remove('open');
+                        dayOverlay.classList.remove('open');
+                        calendar.refetchEvents();
+                    } else {
+                        alert('삭제에 실패했습니다.');
+                    }
+                })
+                .catch(function () { alert('삭제 중 오류가 발생했습니다.'); });
+        });
 
         // ---------- 새 일정 추가 모달 ----------
         function openNewEventModal(dateStr) {

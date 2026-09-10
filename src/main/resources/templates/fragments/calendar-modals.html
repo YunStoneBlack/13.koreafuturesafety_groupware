@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <!--
-  캘린더 관련 공용 모달 3종(하루 일정 목록 / 일정 상세 / 새 일정 추가).
+  캘린더 관련 공용 모달 4종(하루 일정 목록 / 일정 상세 / 일정 수정 / 새 일정 추가).
   static/js/calendar-widget.js가 이 안의 id들을 그대로 참조하므로,
   이 조각을 쓰는 페이지는 반드시 calendar-widget.js도 같이 불러와야 한다.
 -->
@@ -31,8 +31,51 @@
                 <div class="content-body" id="eventDetailDescription"></div>
             </div>
             <div class="day-modal-foot">
-                <a class="btn btn-primary btn-sm" id="eventDetailEditLink" style="justify-content:center;">수정하기</a>
+                <button type="button" class="btn btn-primary btn-sm" id="eventDetailEditBtn" style="justify-content:center;">수정하기</button>
             </div>
+        </div>
+    </div>
+
+    <div class="day-modal-overlay" id="editEventOverlay">
+        <div class="day-modal">
+            <div class="day-modal-head">
+                <h3>일정 수정</h3>
+                <button type="button" class="day-modal-close" id="editEventClose" aria-label="닫기">&times;</button>
+            </div>
+            <form id="editEventForm" class="panel-body">
+                <div class="field">
+                    <label>제목</label>
+                    <input type="text" id="editEventTitle" required />
+                </div>
+                <div class="field">
+                    <label>설명</label>
+                    <textarea id="editEventDescription" rows="3"></textarea>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label>시작 날짜</label>
+                        <input type="date" id="editEventStartDate" required />
+                    </div>
+                    <div class="field">
+                        <label>시작 시간</label>
+                        <input type="time" id="editEventStartTime" lang="en-GB" required />
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label>종료 날짜</label>
+                        <input type="date" id="editEventEndDate" required />
+                    </div>
+                    <div class="field">
+                        <label>종료 시간</label>
+                        <input type="time" id="editEventEndTime" lang="en-GB" required />
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary">저장</button>
+                    <button type="button" class="btn btn-danger" id="editEventDeleteBtn">삭제</button>
+                </div>
+            </form>
         </div>
     </div>
 
