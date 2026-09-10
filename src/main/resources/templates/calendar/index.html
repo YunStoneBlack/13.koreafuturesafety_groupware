@@ -14,7 +14,7 @@
         <div class="topline">
             <div>
                 <h1>일정공유</h1>
-                <p class="page-sub">전 직원이 함께 보는 캘린더입니다.</p>
+                <p class="page-sub">전 직원이 함께 보는 캘린더입니다. 날짜를 클릭하면 그날의 일정을 볼 수 있습니다.</p>
             </div>
             <a class="btn btn-primary" th:href="@{/calendar/new}">+ 일정 추가</a>
         </div>
@@ -23,10 +23,71 @@
             <div id="calendar"></div>
         </div>
 
+        <div class="day-modal-overlay" id="dayModalOverlay">
+            <div class="day-modal">
+                <div class="day-modal-head">
+                    <h3 id="dayModalTitle">일정</h3>
+                    <button type="button" class="day-modal-close" id="dayModalClose" aria-label="닫기">&times;</button>
+                </div>
+                <div class="day-modal-list rows" id="dayModalList"></div>
+                <div class="day-modal-foot">
+                    <a class="btn btn-primary btn-sm" id="dayModalAddLink">+ 새 일정 추가</a>
+                </div>
+            </div>
+        </div>
+
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', function () {
                 var style = getComputedStyle(document.documentElement);
                 var calendarEl = document.getElementById('calendar');
+                var overlay = document.getElementById('dayModalOverlay');
+                var titleEl = document.getElementById('dayModalTitle');
+                var listEl = document.getElementById('dayModalList');
+                var addLink = document.getElementById('dayModalAddLink');
+
+                function pad(n) { return n < 10 ? '0' + n : '' + n; }
+                function toDateStr(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+
+                function openDayModal(dateStr) {
+                    var dayEvents = calendar.getEvents()
+                        .filter(function (ev) { return toDateStr(ev.start) === dateStr; })
+                        .map(function (ev) { return { id: ev.id, title: ev.title, start: ev.startStr }; })
+                        .sort(function (a, b) { return a.start.localeCompare(b.start); });
+
+                    var parts = dateStr.split('-');
+                    titleEl.textContent = parseInt(parts[1], 10) + '월 ' + parseInt(parts[2], 10) + '일 일정';
+
+                    listEl.innerHTML = '';
+                    if (dayEvents.length === 0) {
+                        var empty = document.createElement('div');
+                        empty.className = 'empty-note';
+                        empty.textContent = '등록된 일정이 없습니다.';
+                        listEl.appendChild(empty);
+                    } else {
+                        dayEvents.forEach(function (ev) {
+                            var row = document.createElement('a');
+                            row.className = 'row';
+                            row.href = '/calendar/' + ev.id + '/edit';
+                            var titleSpan = document.createElement('span');
+                            titleSpan.className = 'title';
+                            titleSpan.textContent = ev.title;
+                            var timeSpan = document.createElement('span');
+                            timeSpan.className = 'meta num';
+                            timeSpan.textContent = ev.start.slice(11, 16);
+                            row.appendChild(titleSpan);
+                            row.appendChild(timeSpan);
+                            listEl.appendChild(row);
+                        });
+                    }
+                    addLink.href = '/calendar/new?date=' + dateStr;
+                    overlay.classList.add('open');
+                }
+
+                function closeDayModal() { overlay.classList.remove('open'); }
+
+                document.getElementById('dayModalClose').addEventListener('click', closeDayModal);
+                overlay.addEventListener('click', function (e) { if (e.target === overlay) closeDayModal(); });
+
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     locale: 'ko',
@@ -45,10 +106,10 @@
                             .catch(failureCallback);
                     },
                     dateClick: function (info) {
-                        window.location.href = '/calendar/new?date=' + info.dateStr;
+                        openDayModal(info.dateStr);
                     },
                     eventClick: function (info) {
-                        window.location.href = '/calendar/' + info.event.id + '/edit';
+                        openDayModal(toDateStr(info.event.start));
                     }
                 });
                 calendar.render();

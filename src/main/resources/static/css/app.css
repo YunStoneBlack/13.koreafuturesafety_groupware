@@ -156,6 +156,25 @@ form.inline { display: inline; }
 
 .cal-embed { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-card); padding: 18px; }
 
+/* ---------- day agenda modal ---------- */
+.day-modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(15, 17, 32, 0.45);
+  align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+}
+.day-modal-overlay.open { display: flex; }
+.day-modal {
+  background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-card);
+  width: 100%; max-width: 380px; max-height: 80vh; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.day-modal-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.day-modal-head h3 { margin: 0; font-size: 15px; font-weight: 700; }
+.day-modal-close { background: none; border: none; font-size: 22px; line-height: 1; color: var(--faint); cursor: pointer; padding: 2px 6px; }
+.day-modal-close:hover { color: var(--ink); }
+.day-modal-list { overflow-y: auto; flex: 1; min-height: 40px; }
+.day-modal-foot { padding: 14px 18px; border-top: 1px solid var(--line); }
+.day-modal-foot .btn { width: 100%; justify-content: center; }
+
 /* ---------- FullCalendar theming to match app tokens ---------- */
 .fc {
   --fc-border-color: var(--line);
