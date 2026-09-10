@@ -4,34 +4,28 @@
  * (dayModalOverlay/eventDetailOverlay/newEventOverlay)을 갖고 있다고 가정한다.
  */
 
-// 대한민국 공휴일/명절(2026년, 대체공휴일 포함). month2k.com 기준(2026-09
-// 조회) - 매년 사람이 직접 갱신해야 하는 하드코딩 목록이다. 음력 기반(설날/
-// 추석/부처님오신날)이라 해가 바뀌면 날짜가 달라지므로, 다음 해가 되면
-// 'YYYY-MM-DD' 키를 새로 추가해줘야 한다.
-// label: false인 날은 "~연휴"라서 날짜 칸에 이름 글자는 안 띄우고 빨간
-// 숫자색만 적용한다(예: 추석 연휴 이틀은 label 없이, 추석 당일만 label true).
-var KR_HOLIDAYS = {
-    '2026-01-01': { name: '신정', label: true },
-    '2026-02-16': { name: '설날 연휴', label: false },
-    '2026-02-17': { name: '설날', label: true },
-    '2026-02-18': { name: '설날 연휴', label: false },
-    '2026-03-01': { name: '삼일절', label: true },
-    '2026-03-02': { name: '대체공휴일', label: true },
-    '2026-05-01': { name: '근로자의 날', label: true },
-    '2026-05-05': { name: '어린이날', label: true },
-    '2026-05-24': { name: '부처님오신날', label: true },
-    '2026-05-25': { name: '대체공휴일', label: true },
-    '2026-06-06': { name: '현충일', label: true },
-    '2026-08-15': { name: '광복절', label: true },
-    '2026-08-17': { name: '대체공휴일', label: true },
-    '2026-09-24': { name: '추석 연휴', label: false },
-    '2026-09-25': { name: '추석', label: true },
-    '2026-09-26': { name: '추석 연휴', label: false },
-    '2026-10-03': { name: '개천절', label: true },
-    '2026-10-05': { name: '대체공휴일', label: true },
-    '2026-10-09': { name: '한글날', label: true },
-    '2026-12-25': { name: '기독탄신일', label: true }
-};
+// 대한민국 공휴일/명절(고정일 + 음력 기반 + 대체공휴일)은 이제 서버(/api/holidays?year=)가
+// 계산해서 내려준다(KoreanHolidayService, usingsky/KoreanLunarCalendar 라이브러리 사용,
+// 2025~2050년 지원) - 예전엔 여기(JS)에 연도별로 손으로 날짜를 하드코딩했었지만,
+// 음력 변환을 서버가 대신 해주니 더 이상 매년 사람이 갱신할 필요가 없다.
+// 연도별로 한 번 받아오면 holidayCacheByYear에 캐싱해두고, 화면에 보이는 연도가
+// 바뀔 때만(예: 12월<->1월 넘어갈 때) 새로 요청한다.
+var holidayCacheByYear = {};
+var KR_HOLIDAYS = {};
+
+function fetchHolidayYear(year) {
+    if (holidayCacheByYear[year]) return holidayCacheByYear[year];
+    var promise = fetch('/api/holidays?year=' + year)
+        .then(function (res) { return res.json(); })
+        .then(function (list) {
+            var map = {};
+            list.forEach(function (h) { map[h.date] = { name: h.name, label: h.label }; });
+            return map;
+        })
+        .catch(function () { return {}; });
+    holidayCacheByYear[year] = promise;
+    return promise;
+}
 
 function initGroupwareCalendar(elId, fcOptions) {
     document.addEventListener('DOMContentLoaded', function () {
@@ -373,7 +367,17 @@ function initGroupwareCalendar(elId, fcOptions) {
             initialView: 'dayGridMonth',
             locale: 'ko',
             eventColor: style.getPropertyValue('--blue').trim(),
-            datesSet: function () { applyHolidayStyling(); },
+            datesSet: function (arg) {
+                // 달력 그리드에 보이는 범위가 걸친 연도(1~2개, 예: 12월↔1월 경계)의
+                // 공휴일을 미리 받아 KR_HOLIDAYS로 합친 뒤에 칠한다.
+                var startYear = arg.start.getFullYear();
+                var endYear = new Date(arg.end.getTime() - 86400000).getFullYear();
+                var years = startYear === endYear ? [startYear] : [startYear, endYear];
+                Promise.all(years.map(fetchHolidayYear)).then(function (maps) {
+                    KR_HOLIDAYS = Object.assign.apply(Object, [{}].concat(maps));
+                    applyHolidayStyling();
+                });
+            },
             eventContent: function (arg) {
                 var dot = document.createElement('div');
                 dot.className = 'fc-daygrid-event-dot';
