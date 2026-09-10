@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--
+  캘린더 관련 공용 모달 3종(하루 일정 목록 / 일정 상세 / 새 일정 추가).
+  static/js/calendar-widget.js가 이 안의 id들을 그대로 참조하므로,
+  이 조각을 쓰는 페이지는 반드시 calendar-widget.js도 같이 불러와야 한다.
+-->
+<div th:fragment="modals">
+    <div class="day-modal-overlay" id="dayModalOverlay">
+        <div class="day-modal">
+            <div class="day-modal-head">
+                <h3 id="dayModalTitle">일정</h3>
+                <button type="button" class="day-modal-close" id="dayModalClose" aria-label="닫기">&times;</button>
+            </div>
+            <div class="day-modal-list rows" id="dayModalList"></div>
+            <div class="day-modal-foot">
+                <button type="button" class="btn btn-primary btn-sm" id="dayModalAddBtn" style="width:100%; justify-content:center;">+ 새 일정 추가</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="day-modal-overlay" id="eventDetailOverlay">
+        <div class="day-modal">
+            <div class="day-modal-head">
+                <h3 id="eventDetailTitle">일정</h3>
+                <button type="button" class="day-modal-close" id="eventDetailClose" aria-label="닫기">&times;</button>
+            </div>
+            <div class="panel-body">
+                <p class="meta-line" id="eventDetailTime" style="margin:0 0 14px;"></p>
+                <div class="content-body" id="eventDetailDescription"></div>
+            </div>
+            <div class="day-modal-foot">
+                <a class="btn btn-primary btn-sm" id="eventDetailEditLink" style="justify-content:center;">수정하기</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="day-modal-overlay" id="newEventOverlay">
+        <div class="day-modal">
+            <div class="day-modal-head">
+                <h3>새 일정 추가</h3>
+                <button type="button" class="day-modal-close" id="newEventClose" aria-label="닫기">&times;</button>
+            </div>
+            <form id="newEventForm" class="panel-body">
+                <div class="field">
+                    <label>제목</label>
+                    <input type="text" id="newEventTitle" required />
+                </div>
+                <div class="field">
+                    <label>설명</label>
+                    <textarea id="newEventDescription" rows="3"></textarea>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label>시작 날짜</label>
+                        <input type="date" id="newEventStartDate" required />
+                    </div>
+                    <div class="field">
+                        <label>시작 시간</label>
+                        <input type="time" id="newEventStartTime" lang="en-GB" required />
+                    </div>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label>종료 날짜</label>
+                        <input type="date" id="newEventEndDate" required />
+                    </div>
+                    <div class="field">
+                        <label>종료 시간</label>
+                        <input type="time" id="newEventEndTime" lang="en-GB" required />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">저장</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

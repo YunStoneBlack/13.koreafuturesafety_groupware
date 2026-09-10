@@ -2,9 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_parameter" th:content="${_csrf.parameterName}" />
     <title>한국미래안전 그룹웨어</title>
     <link rel="stylesheet" th:href="@{/css/app.css}" />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script th:src="@{/js/calendar-widget.js}"></script>
 </head>
 <body>
 <div class="app">
@@ -111,152 +114,15 @@
             </div>
         </div>
 
-        <div class="day-modal-overlay" id="dayModalOverlay">
-            <div class="day-modal">
-                <div class="day-modal-head">
-                    <h3 id="dayModalTitle">일정</h3>
-                    <button type="button" class="day-modal-close" id="dayModalClose" aria-label="닫기">&times;</button>
-                </div>
-                <div class="day-modal-list rows" id="dayModalList"></div>
-                <div class="day-modal-foot">
-                    <a class="btn btn-primary btn-sm" id="dayModalAddLink">+ 새 일정 추가</a>
-                </div>
-            </div>
-        </div>
+        <div th:replace="~{fragments/calendar-modals :: modals}"></div>
 
-        <div class="day-modal-overlay" id="eventDetailOverlay">
-            <div class="day-modal">
-                <div class="day-modal-head">
-                    <h3 id="eventDetailTitle">일정</h3>
-                    <button type="button" class="day-modal-close" id="eventDetailClose" aria-label="닫기">&times;</button>
-                </div>
-                <div class="panel-body">
-                    <p class="meta-line" id="eventDetailTime" style="margin:0 0 14px;"></p>
-                    <div class="content-body" id="eventDetailDescription"></div>
-                </div>
-                <div class="day-modal-foot">
-                    <a class="btn btn-primary btn-sm" id="eventDetailEditLink" style="justify-content:center;">수정하기</a>
-                </div>
-            </div>
-        </div>
+        <script>
+            initGroupwareCalendar('home-calendar', {
+                height: 560,
+                headerToolbar: { left: 'title', center: '', right: 'prev,next today' }
+            });
+        </script>
     </main>
 </div>
-
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function () {
-        var style = getComputedStyle(document.documentElement);
-        var calendarEl = document.getElementById('home-calendar');
-        var dayOverlay = document.getElementById('dayModalOverlay');
-        var dayTitleEl = document.getElementById('dayModalTitle');
-        var dayListEl = document.getElementById('dayModalList');
-        var dayAddLink = document.getElementById('dayModalAddLink');
-
-        var detailOverlay = document.getElementById('eventDetailOverlay');
-        var detailTitleEl = document.getElementById('eventDetailTitle');
-        var detailTimeEl = document.getElementById('eventDetailTime');
-        var detailDescEl = document.getElementById('eventDetailDescription');
-        var detailEditLink = document.getElementById('eventDetailEditLink');
-
-        function pad(n) { return n < 10 ? '0' + n : '' + n; }
-        function toDateStr(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
-        function timeKorean(hhmm) {
-            var h = parseInt(hhmm.slice(0, 2), 10);
-            var m = parseInt(hhmm.slice(3, 5), 10);
-            return m === 0 ? (h + '시') : (h + '시 ' + m + '분');
-        }
-
-        function openEventDetail(ev) {
-            detailTitleEl.textContent = ev.title;
-            var startParts = ev.start.split('-');
-            var dateLabel = parseInt(startParts[1], 10) + '월 ' + parseInt(startParts[2].slice(0, 2), 10) + '일';
-            detailTimeEl.textContent = dateLabel + ' · ' + timeKorean(ev.start.slice(11, 16)) + ' ~ ' + timeKorean(ev.end.slice(11, 16));
-            detailDescEl.textContent = ev.description ? ev.description : '설명이 없습니다.';
-            detailEditLink.href = '/calendar/' + ev.id + '/edit';
-            detailOverlay.classList.add('open');
-        }
-
-        function openDayModal(dateStr) {
-            var dayEvents = calendar.getEvents()
-                .filter(function (ev) { return toDateStr(ev.start) === dateStr; })
-                .map(function (ev) {
-                    return {
-                        id: ev.id, title: ev.title, start: ev.startStr, end: ev.endStr,
-                        description: ev.extendedProps.description
-                    };
-                })
-                .sort(function (a, b) { return a.start.localeCompare(b.start); });
-
-            var parts = dateStr.split('-');
-            dayTitleEl.textContent = parseInt(parts[1], 10) + '월 ' + parseInt(parts[2], 10) + '일 일정';
-
-            dayListEl.innerHTML = '';
-            if (dayEvents.length === 0) {
-                var empty = document.createElement('div');
-                empty.className = 'empty-note';
-                empty.textContent = '등록된 일정이 없습니다.';
-                dayListEl.appendChild(empty);
-            } else {
-                dayEvents.forEach(function (ev) {
-                    var row = document.createElement('button');
-                    row.type = 'button';
-                    row.className = 'row';
-                    row.style.width = '100%';
-                    row.style.textAlign = 'left';
-                    row.style.border = 'none';
-                    row.style.background = 'none';
-                    row.style.cursor = 'pointer';
-                    row.style.font = 'inherit';
-                    var titleSpan = document.createElement('span');
-                    titleSpan.className = 'title';
-                    titleSpan.textContent = ev.title;
-                    var timeSpan = document.createElement('span');
-                    timeSpan.className = 'meta num';
-                    timeSpan.textContent = ev.start.slice(11, 16);
-                    row.appendChild(titleSpan);
-                    row.appendChild(timeSpan);
-                    row.addEventListener('click', function () { openEventDetail(ev); });
-                    dayListEl.appendChild(row);
-                });
-            }
-            dayAddLink.href = '/calendar/new?date=' + dateStr;
-            dayOverlay.classList.add('open');
-        }
-
-        function closeDayModal() { dayOverlay.classList.remove('open'); }
-        function closeEventDetail() { detailOverlay.classList.remove('open'); }
-
-        document.getElementById('dayModalClose').addEventListener('click', closeDayModal);
-        dayOverlay.addEventListener('click', function (e) { if (e.target === dayOverlay) closeDayModal(); });
-        document.getElementById('eventDetailClose').addEventListener('click', closeEventDetail);
-        detailOverlay.addEventListener('click', function (e) { if (e.target === detailOverlay) closeEventDetail(); });
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'ko',
-            height: 560,
-            headerToolbar: { left: 'title', center: '', right: 'prev,next today' },
-            eventColor: style.getPropertyValue('--blue').trim(),
-            events: function (fetchInfo, successCallback, failureCallback) {
-                var start = fetchInfo.start.toISOString().slice(0, 10);
-                var end = fetchInfo.end.toISOString().slice(0, 10);
-                fetch('/api/calendar/events?start=' + start + '&end=' + end)
-                    .then(function (res) { return res.json(); })
-                    .then(function (data) {
-                        successCallback(data.map(function (e) {
-                            return { id: e.id, title: e.title, start: e.start, end: e.end, description: e.description };
-                        }));
-                    })
-                    .catch(failureCallback);
-            },
-            dateClick: function (info) {
-                openDayModal(info.dateStr);
-            },
-            eventClick: function (info) {
-                openDayModal(toDateStr(info.event.start));
-            }
-        });
-        calendar.render();
-    });
-</script>
 </body>
 </html>

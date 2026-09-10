@@ -167,7 +167,7 @@ form.inline { display: inline; }
   width: 100%; max-width: 380px; max-height: 80vh; overflow: hidden;
   display: flex; flex-direction: column;
 }
-.day-modal-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.day-modal-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; border-bottom: 1px solid var(--line); cursor: move; }
 .day-modal-head h3 { margin: 0; font-size: 15px; font-weight: 700; }
 .day-modal-close { background: none; border: none; font-size: 22px; line-height: 1; color: var(--faint); cursor: pointer; padding: 2px 6px; }
 .day-modal-close:hover { color: var(--ink); }
