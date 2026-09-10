@@ -8,27 +8,29 @@
 // 조회) - 매년 사람이 직접 갱신해야 하는 하드코딩 목록이다. 음력 기반(설날/
 // 추석/부처님오신날)이라 해가 바뀌면 날짜가 달라지므로, 다음 해가 되면
 // 'YYYY-MM-DD' 키를 새로 추가해줘야 한다.
+// label: false인 날은 "~연휴"라서 날짜 칸에 이름 글자는 안 띄우고 빨간
+// 숫자색만 적용한다(예: 추석 연휴 이틀은 label 없이, 추석 당일만 label true).
 var KR_HOLIDAYS = {
-    '2026-01-01': '신정',
-    '2026-02-16': '설날 연휴',
-    '2026-02-17': '설날',
-    '2026-02-18': '설날 연휴',
-    '2026-03-01': '삼일절',
-    '2026-03-02': '대체공휴일',
-    '2026-05-01': '근로자의 날',
-    '2026-05-05': '어린이날',
-    '2026-05-24': '부처님오신날',
-    '2026-05-25': '대체공휴일',
-    '2026-06-06': '현충일',
-    '2026-08-15': '광복절',
-    '2026-08-17': '대체공휴일',
-    '2026-09-24': '추석 연휴',
-    '2026-09-25': '추석',
-    '2026-09-26': '추석 연휴',
-    '2026-10-03': '개천절',
-    '2026-10-05': '대체공휴일',
-    '2026-10-09': '한글날',
-    '2026-12-25': '기독탄신일'
+    '2026-01-01': { name: '신정', label: true },
+    '2026-02-16': { name: '설날 연휴', label: false },
+    '2026-02-17': { name: '설날', label: true },
+    '2026-02-18': { name: '설날 연휴', label: false },
+    '2026-03-01': { name: '삼일절', label: true },
+    '2026-03-02': { name: '대체공휴일', label: true },
+    '2026-05-01': { name: '근로자의 날', label: true },
+    '2026-05-05': { name: '어린이날', label: true },
+    '2026-05-24': { name: '부처님오신날', label: true },
+    '2026-05-25': { name: '대체공휴일', label: true },
+    '2026-06-06': { name: '현충일', label: true },
+    '2026-08-15': { name: '광복절', label: true },
+    '2026-08-17': { name: '대체공휴일', label: true },
+    '2026-09-24': { name: '추석 연휴', label: false },
+    '2026-09-25': { name: '추석', label: true },
+    '2026-09-26': { name: '추석 연휴', label: false },
+    '2026-10-03': { name: '개천절', label: true },
+    '2026-10-05': { name: '대체공휴일', label: true },
+    '2026-10-09': { name: '한글날', label: true },
+    '2026-12-25': { name: '기독탄신일', label: true }
 };
 
 function initGroupwareCalendar(elId, fcOptions) {
@@ -344,8 +346,18 @@ function initGroupwareCalendar(elId, fcOptions) {
                 return KR_HOLIDAYS[toDateStr(arg.date)] ? ['holiday'] : [];
             },
             dayCellDidMount: function (arg) {
-                var name = KR_HOLIDAYS[toDateStr(arg.date)];
-                if (name) arg.el.title = name;
+                var holiday = KR_HOLIDAYS[toDateStr(arg.date)];
+                if (!holiday) return;
+                arg.el.title = holiday.name;
+                if (holiday.label) {
+                    var eventsContainer = arg.el.querySelector('.fc-daygrid-day-events');
+                    if (eventsContainer) {
+                        var labelEl = document.createElement('div');
+                        labelEl.className = 'holiday-label';
+                        labelEl.textContent = holiday.name;
+                        eventsContainer.insertBefore(labelEl, eventsContainer.firstChild);
+                    }
+                }
             },
             eventContent: function (arg) {
                 var dot = document.createElement('div');
