@@ -205,7 +205,7 @@ form.inline { display: inline; }
 .fc .fc-daygrid-day:not(.fc-day-today):not(.fc-day-other).fc-day-sun .fc-daygrid-day-number { color: var(--crit); }
 .fc .fc-daygrid-day:not(.fc-day-today):not(.fc-day-other).fc-day-sat .fc-daygrid-day-number { color: var(--blue); }
 .fc .fc-daygrid-day:not(.fc-day-today):not(.fc-day-other).holiday .fc-daygrid-day-number { color: var(--crit); }
-.holiday-label { font-size: 8.5px; font-weight: 700; color: var(--ink); margin: 2px 10px 0 0; }
+.holiday-label { font-size: 9.6px; font-weight: 700; color: var(--ink); margin: 0 10px 0 0; align-self: flex-end; }
 .fc .fc-daygrid-day-frame { cursor: pointer; }
 .fc .fc-daygrid-day:not(.fc-day-today):hover { background-color: var(--paper); }
 .fc .fc-daygrid-dot-event:hover, .fc-daygrid-event.fc-event:hover { background: transparent; }
