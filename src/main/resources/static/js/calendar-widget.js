@@ -343,19 +343,25 @@ function initGroupwareCalendar(elId, fcOptions) {
             locale: 'ko',
             eventColor: style.getPropertyValue('--blue').trim(),
             dayCellClassNames: function (arg) {
+                if (arg.isOther) return [];
                 return KR_HOLIDAYS[toDateStr(arg.date)] ? ['holiday'] : [];
             },
             dayCellDidMount: function (arg) {
+                // 지금 보고 있는 달이 아니라 앞/뒤 달이 흐리게 걸쳐 보이는 칸(예: 9월 화면에
+                // 10월 1~3일)에는 그 달의 공휴일 정보를 굳이 겹쳐 보여주지 않는다.
+                if (arg.isOther) return;
                 var holiday = KR_HOLIDAYS[toDateStr(arg.date)];
                 if (!holiday) return;
                 arg.el.title = holiday.name;
                 if (holiday.label) {
-                    var eventsContainer = arg.el.querySelector('.fc-daygrid-day-events');
-                    if (eventsContainer) {
+                    var topEl = arg.el.querySelector('.fc-daygrid-day-top');
+                    if (topEl) {
                         var labelEl = document.createElement('div');
                         labelEl.className = 'holiday-label';
                         labelEl.textContent = holiday.name;
-                        eventsContainer.insertBefore(labelEl, eventsContainer.firstChild);
+                        // .fc-daygrid-day-top은 FullCalendar 기본 CSS가 row-reverse라
+                        // 날짜 숫자(<a>) 뒤에 넣어야 화면에는 숫자 반대편(왼쪽)에 뜬다.
+                        topEl.appendChild(labelEl);
                     }
                 }
             },
