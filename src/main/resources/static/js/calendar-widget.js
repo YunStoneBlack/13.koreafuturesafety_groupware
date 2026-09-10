@@ -51,12 +51,16 @@ function initGroupwareCalendar(elId, fcOptions) {
         function pad(n) { return n < 10 ? '0' + n : '' + n; }
         function toDateStr(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
         function timeKorean(hhmm) {
+            if (!hhmm || hhmm.length < 5) return '';
             var h = parseInt(hhmm.slice(0, 2), 10);
             var m = parseInt(hhmm.slice(3, 5), 10);
+            if (isNaN(h) || isNaN(m)) return '';
             return m === 0 ? (h + '시') : (h + '시 ' + m + '분');
         }
         function timeRangeKorean(startIso, endIso) {
-            return timeKorean(startIso.slice(11, 16)) + ' ~ ' + timeKorean(endIso.slice(11, 16));
+            var startText = timeKorean(startIso ? startIso.slice(11, 16) : '');
+            var endText = endIso ? timeKorean(endIso.slice(11, 16)) : '';
+            return endText ? (startText + ' ~ ' + endText) : startText;
         }
 
         // ---------- 시/분 드롭다운(00~23시, 10분 단위) ----------
@@ -150,9 +154,19 @@ function initGroupwareCalendar(elId, fcOptions) {
             editStartDate.value = ev.start.slice(0, 10);
             editStartHour.value = ev.start.slice(11, 13);
             editStartMinute.value = snapMinute(parseInt(ev.start.slice(14, 16), 10));
-            editEndDate.value = ev.end.slice(0, 10);
-            editEndHour.value = ev.end.slice(11, 13);
-            editEndMinute.value = snapMinute(parseInt(ev.end.slice(14, 16), 10));
+            if (ev.end && ev.end.length >= 16) {
+                editEndDate.value = ev.end.slice(0, 10);
+                editEndHour.value = ev.end.slice(11, 13);
+                editEndMinute.value = snapMinute(parseInt(ev.end.slice(14, 16), 10));
+            } else {
+                // 저장된 종료 시각이 없거나 시작보다 빠른(데이터 오류) 경우:
+                // 화면이 비어있지 않도록 일단 시작+1시간으로 채워두고, 사용자가 직접 고치게 한다.
+                var bumped = new Date(ev.start.replace(' ', 'T'));
+                bumped.setHours(bumped.getHours() + 1);
+                editEndDate.value = toDateStr(bumped);
+                editEndHour.value = pad(bumped.getHours());
+                editEndMinute.value = pad(bumped.getMinutes());
+            }
             detailOverlay.classList.remove('open');
             resetPosition(editOverlay);
             editOverlay.classList.add('open');
