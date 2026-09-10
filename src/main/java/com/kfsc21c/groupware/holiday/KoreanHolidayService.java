@@ -8,9 +8,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 대한민국 공휴일(고정일 + 음력 기반 + 대체공휴일)을 계산한다.
@@ -46,6 +48,7 @@ public class KoreanHolidayService {
     private List<HolidayEntry> compute(int year) {
         Map<LocalDate, HolidayEntry> holidays = new LinkedHashMap<>();
         Map<LocalDate, Integer> hitCount = new HashMap<>();
+        Set<LocalDate> substitutedSearchPoints = new HashSet<>();
         List<Runnable> substituteChecks = new ArrayList<>();
 
         // ---- 고정일, 대체공휴일 없음 ----
@@ -55,16 +58,16 @@ public class KoreanHolidayService {
         put(holidays, hitCount, LocalDate.of(year, 12, 25), "기독탄신일", true);
 
         // ---- 고정일 + 토/일(또는 다른 공휴일과 겹침) 대체공휴일 ----
-        addSatSunEligible(holidays, hitCount, substituteChecks, LocalDate.of(year, 3, 1), "삼일절");
-        addSatSunEligible(holidays, hitCount, substituteChecks, LocalDate.of(year, 5, 5), "어린이날");
-        addSatSunEligible(holidays, hitCount, substituteChecks, LocalDate.of(year, 8, 15), "광복절");
-        addSatSunEligible(holidays, hitCount, substituteChecks, LocalDate.of(year, 10, 3), "개천절");
-        addSatSunEligible(holidays, hitCount, substituteChecks, LocalDate.of(year, 10, 9), "한글날");
-        addSatSunEligible(holidays, hitCount, substituteChecks, lunarToSolar(year, 4, 8), "부처님오신날");
+        addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 3, 1), "삼일절");
+        addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 5, 5), "어린이날");
+        addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 8, 15), "광복절");
+        addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 10, 3), "개천절");
+        addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 10, 9), "한글날");
+        addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, lunarToSolar(year, 4, 8), "부처님오신날");
 
         // ---- 음력 3일 연휴(설날/추석) + 일요일(또는 다른 공휴일과 겹침) 대체공휴일 ----
-        addLunarCluster(holidays, hitCount, substituteChecks, lunarToSolar(year, 1, 1), "설날");
-        addLunarCluster(holidays, hitCount, substituteChecks, lunarToSolar(year, 8, 15), "추석");
+        addLunarCluster(holidays, hitCount, substitutedSearchPoints, substituteChecks, lunarToSolar(year, 1, 1), "설날");
+        addLunarCluster(holidays, hitCount, substitutedSearchPoints, substituteChecks, lunarToSolar(year, 8, 15), "추석");
 
         substituteChecks.forEach(Runnable::run);
 
@@ -90,17 +93,19 @@ public class KoreanHolidayService {
     }
 
     private void addSatSunEligible(Map<LocalDate, HolidayEntry> holidays, Map<LocalDate, Integer> hitCount,
-                                    List<Runnable> substituteChecks, LocalDate date, String name) {
+                                    Set<LocalDate> substitutedSearchPoints, List<Runnable> substituteChecks,
+                                    LocalDate date, String name) {
         put(holidays, hitCount, date, name, true);
         substituteChecks.add(() -> {
             if (isWeekend(date) || hitCount.getOrDefault(date, 0) > 1) {
-                assignSubstitute(holidays, date);
+                assignSubstitute(holidays, substitutedSearchPoints, date);
             }
         });
     }
 
     private void addLunarCluster(Map<LocalDate, HolidayEntry> holidays, Map<LocalDate, Integer> hitCount,
-                                  List<Runnable> substituteChecks, LocalDate middle, String name) {
+                                  Set<LocalDate> substitutedSearchPoints, List<Runnable> substituteChecks,
+                                  LocalDate middle, String name) {
         LocalDate before = middle.minusDays(1);
         LocalDate after = middle.plusDays(1);
         put(holidays, hitCount, before, name + " 연휴", false);
@@ -114,12 +119,21 @@ public class KoreanHolidayService {
                     || hitCount.getOrDefault(middle, 0) > 1
                     || hitCount.getOrDefault(after, 0) > 1;
             if (sundayOrOverlap) {
-                assignSubstitute(holidays, after);
+                assignSubstitute(holidays, substitutedSearchPoints, after);
             }
         });
     }
 
-    private void assignSubstitute(Map<LocalDate, HolidayEntry> holidays, LocalDate searchAfter) {
+    /**
+     * searchAfter(트리거가 된 날짜/연휴 끝날) 기준으로 대체공휴일을 하나만 배정한다.
+     * 같은 searchAfter에 대해 두 번째로 불리면(예: 어린이날/부처님오신날처럼 서로 다른
+     * 공휴일이 같은 날짜를 트리거로 공유하는 경우) 조용히 무시해서 중복 배정을 막는다.
+     */
+    private void assignSubstitute(Map<LocalDate, HolidayEntry> holidays, Set<LocalDate> substitutedSearchPoints,
+                                   LocalDate searchAfter) {
+        if (!substitutedSearchPoints.add(searchAfter)) {
+            return;
+        }
         LocalDate d = searchAfter.plusDays(1);
         while (isWeekend(d) || holidays.containsKey(d)) {
             d = d.plusDays(1);
