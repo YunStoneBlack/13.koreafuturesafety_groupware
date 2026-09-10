@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>급여 입력 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('admin')}"></div>
+
+    <main class="main">
+        <div class="crumb"><a th:href="@{/admin}">관리자 메뉴</a><span class="sep">/</span><a th:href="@{/admin/payroll}">급여 관리</a><span class="sep">/</span><span th:text="${recordId} != null ? '수정' : '등록'">등록</span></div>
+        <h1 th:text="${recordId} != null ? '급여 수정' : '급여 등록'">급여 등록</h1>
+
+        <p th:if="${error}" style="color: var(--crit); font-weight: 500;" th:text="${error}">에러</p>
+
+        <form class="form-card" th:action="${recordId} != null ? @{/admin/payroll/{id}(id=${recordId})} : @{/admin/payroll}"
+              th:object="${form}" method="post">
+            <div class="field">
+                <label>직원</label>
+                <select th:field="*{employeeId}" required>
+                    <option value="">- 선택 -</option>
+                    <option th:each="emp : ${employees}" th:value="${emp.id}" th:text="${emp.name} + ' (' + ${emp.department} + ')'">직원</option>
+                </select>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>귀속 연도</label>
+                    <input type="number" th:field="*{payYear}" required />
+                </div>
+                <div class="field">
+                    <label>귀속 월</label>
+                    <input type="number" th:field="*{payMonth}" min="1" max="12" required />
+                </div>
+            </div>
+
+            <div class="hint" style="margin: 4px 0 10px; font-weight: 600;">지급 항목</div>
+            <div class="field">
+                <label>기본급</label>
+                <input type="number" th:field="*{baseSalary}" min="0" step="10" required />
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>직책수당</label>
+                    <input type="number" th:field="*{positionAllowance}" min="0" step="10" />
+                </div>
+                <div class="field">
+                    <label>연장근로수당</label>
+                    <input type="number" th:field="*{overtimeAllowance}" min="0" step="10" />
+                </div>
+            </div>
+            <div class="field">
+                <label>기타수당</label>
+                <input type="number" th:field="*{otherAllowance}" min="0" step="10" />
+            </div>
+
+            <div class="hint" style="margin: 14px 0 10px; font-weight: 600;">공제 항목 (4대보험 · 세금)</div>
+            <div class="field-row">
+                <div class="field">
+                    <label>국민연금</label>
+                    <input type="number" th:field="*{nationalPension}" min="0" step="10" />
+                </div>
+                <div class="field">
+                    <label>건강보험</label>
+                    <input type="number" th:field="*{healthInsurance}" min="0" step="10" />
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>장기요양보험</label>
+                    <input type="number" th:field="*{longTermCare}" min="0" step="10" />
+                </div>
+                <div class="field">
+                    <label>고용보험</label>
+                    <input type="number" th:field="*{employmentInsurance}" min="0" step="10" />
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>소득세</label>
+                    <input type="number" th:field="*{incomeTax}" min="0" step="10" />
+                </div>
+                <div class="field">
+                    <label>지방소득세</label>
+                    <input type="number" th:field="*{localIncomeTax}" min="0" step="10" />
+                </div>
+            </div>
+
+            <div class="field">
+                <label>비고</label>
+                <textarea th:field="*{memo}" rows="3"></textarea>
+            </div>
+
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a class="btn btn-ghost" th:href="@{/admin/payroll}">취소</a>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>

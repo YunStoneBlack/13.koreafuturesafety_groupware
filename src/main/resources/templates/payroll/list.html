@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>급여정보 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('payroll')}"></div>
+
+    <main class="main">
+        <div class="topline">
+            <div>
+                <h1>급여정보</h1>
+                <p class="page-sub">본인에게 지급된 급여 내역만 조회할 수 있습니다.</p>
+            </div>
+        </div>
+
+        <div class="panel" th:if="${noEmployeeLink}">
+            <div class="panel-body">
+                <p class="empty-note">계정에 연결된 직원 정보가 없어 급여 내역을 표시할 수 없습니다.
+                    관리자에게 문의해주세요.</p>
+            </div>
+        </div>
+
+        <div class="panel" th:unless="${noEmployeeLink}">
+            <div class="panel-body" style="padding:0;">
+                <table class="plain">
+                    <thead>
+                    <tr><th>귀속월</th><th>실수령액</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="r : ${records}">
+                        <td class="num" th:text="${r.payYear} + '년 ' + ${r.payMonth} + '월'">2026년 9월</td>
+                        <td class="num" th:text="${#numbers.formatDecimal(r.netPay, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td>
+                        <td><a class="btn btn-ghost btn-sm" th:href="@{/payroll/{id}(id=${r.id})}">상세 보기</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="empty-note" style="padding:16px 18px;" th:if="${#lists.isEmpty(records)}">등록된 급여 내역이 없습니다.</div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>급여 상세 - 한국미래안전 그룹웨어</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app">
+    <div th:replace="~{fragments/appshell :: sidebar('payroll')}"></div>
+
+    <main class="main">
+        <div class="crumb"><a th:href="@{/payroll}">급여정보</a><span class="sep">/</span><span th:text="${record.payYear} + '년 ' + ${record.payMonth} + '월'">급여</span></div>
+        <h1 th:text="${record.payYear} + '년 ' + ${record.payMonth} + '월 급여'">급여 상세</h1>
+
+        <div class="stats" style="grid-template-columns: 1fr;">
+            <div class="stat" style="cursor: default;">
+                <div class="label">실수령액</div>
+                <div class="value num" th:text="${#numbers.formatDecimal(record.netPay, 1, 'COMMA', 0, 'POINT')} + '원'">0원</div>
+            </div>
+        </div>
+
+        <div class="stats" style="grid-template-columns: 1fr 1fr; align-items: start;">
+            <div class="panel">
+                <div class="panel-head"><h2>지급 항목</h2></div>
+                <div class="panel-body" style="padding:0;">
+                    <table class="plain">
+                        <tbody>
+                        <tr><td>기본급</td><td class="num" th:text="${#numbers.formatDecimal(record.baseSalary, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr><td>직책수당</td><td class="num" th:text="${#numbers.formatDecimal(record.positionAllowance, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr><td>연장근로수당</td><td class="num" th:text="${#numbers.formatDecimal(record.overtimeAllowance, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr><td>기타수당</td><td class="num" th:text="${#numbers.formatDecimal(record.otherAllowance, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr style="font-weight:700;"><td>지급총액</td><td class="num" th:text="${#numbers.formatDecimal(record.totalPayment, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head"><h2>공제 항목</h2></div>
+                <div class="panel-body" style="padding:0;">
+                    <table class="plain">
+                        <tbody>
+                        <tr><td>국민연금</td><td class="num" th:text="${#numbers.formatDecimal(record.nationalPension, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr><td>건강보험</td><td class="num" th:text="${#numbers.formatDecimal(record.healthInsurance, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr><td>장기요양보험</td><td class="num" th:text="${#numbers.formatDecimal(record.longTermCare, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr><td>고용보험</td><td class="num" th:text="${#numbers.formatDecimal(record.employmentInsurance, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr><td>소득세</td><td class="num" th:text="${#numbers.formatDecimal(record.incomeTax, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr><td>지방소득세</td><td class="num" th:text="${#numbers.formatDecimal(record.localIncomeTax, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        <tr style="font-weight:700;"><td>공제총액</td><td class="num" th:text="${#numbers.formatDecimal(record.totalDeduction, 1, 'COMMA', 0, 'POINT')} + '원'">0원</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" th:if="${record.memo != null and !record.memo.isBlank()}">
+            <div class="panel-head"><h2>비고</h2></div>
+            <div class="panel-body">
+                <p style="margin:0;" th:text="${record.memo}">비고</p>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>
