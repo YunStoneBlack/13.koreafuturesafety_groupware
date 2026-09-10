@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
 :root {
+  color-scheme: light;
   --paper: #F4F6FB;
   --surface: #FFFFFF;
   --ink: #1B1E2E;
@@ -25,14 +26,11 @@
   --shadow-card: 0 1px 2px rgba(27, 30, 46, 0.04), 0 1px 8px rgba(27, 30, 46, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #14162A; --surface: #1B1E38; --ink: #E7E9F5; --muted: #9297B8; --faint: #6E7292;
-    --line: #2B2F52; --blue: #5B9FEF; --blue-soft: #202C4A; --green: #45C57E; --green-soft: #16302A;
-    --warn: #E0A24A; --warn-soft: #382A16; --crit: #F0685F; --crit-soft: #3A1E1E;
-    --shadow-card: 0 1px 2px rgba(0,0,0,.25), 0 4px 16px rgba(0,0,0,.3);
-  }
-}
+/* 사용자 기기가 다크모드여도 이 페이지는 항상 라이트 모드로 고정한다
+   (전 직원이 같은 화면을 보도록) - 위 :root의 color-scheme: light 선언과 함께,
+   OS 다크모드 설정을 따라가는 자동 전환(@media prefers-color-scheme)은 두지 않는다.
+   아래 [data-theme="dark"] 규칙은 수동 토글 버튼이 생길 때를 대비해 남겨두되,
+   현재는 그 속성을 설정하는 UI가 없어 실제로 적용되지 않는다. */
 :root[data-theme="dark"] {
   --paper: #14162A; --surface: #1B1E38; --ink: #E7E9F5; --muted: #9297B8; --faint: #6E7292;
   --line: #2B2F52; --blue: #5B9FEF; --blue-soft: #202C4A; --green: #45C57E; --green-soft: #16302A;
