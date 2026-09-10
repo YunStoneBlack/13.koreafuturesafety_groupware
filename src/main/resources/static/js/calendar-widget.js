@@ -337,34 +337,43 @@ function initGroupwareCalendar(elId, fcOptions) {
         document.getElementById('dayModalClose').addEventListener('click', function () { dayOverlay.classList.remove('open'); });
         dayOverlay.addEventListener('click', function (e) { if (e.target === dayOverlay) dayOverlay.classList.remove('open'); });
 
+        // ---------- 공휴일 표시 ----------
+        // dayCellDidMount는 "이 칸이 처음 DOM에 붙을 때" 딱 한 번만 불린다.
+        // FullCalendar가 월 이동 시 일부 날짜 칸(특히 이전/다음 달과 겹치는 줄)의
+        // DOM을 재사용하는 경우가 있어서, didMount에만 의존하면 예를 들어
+        // "9월 화면에 흐리게 보이던 10월 1~3일"이 "10월 화면의 진짜 10월 1~3일"이
+        // 될 때 다시 안 불려서 공휴일 표시가 누락되는 버그가 있었다(9월→10월은
+        // 안 보이는데 9월→11월→10월로 가면 보이는 증상이 바로 이거). 그래서 월이
+        // 바뀔 때마다("datesSet") 보이는 칸을 전부 다시 스캔해서 매번 새로 칠한다.
+        function applyHolidayStyling() {
+            calendarEl.querySelectorAll('.fc-daygrid-day').forEach(function (cell) {
+                var dateStr = cell.getAttribute('data-date');
+                var isOther = cell.classList.contains('fc-day-other');
+                var holiday = !isOther ? KR_HOLIDAYS[dateStr] : null;
+
+                cell.classList.toggle('holiday', !!holiday);
+                cell.title = holiday ? holiday.name : '';
+
+                var topEl = cell.querySelector('.fc-daygrid-day-top');
+                var existingLabel = topEl ? topEl.querySelector('.holiday-label') : null;
+                if (existingLabel) existingLabel.remove();
+                if (holiday && holiday.label && topEl) {
+                    var labelEl = document.createElement('div');
+                    labelEl.className = 'holiday-label';
+                    labelEl.textContent = holiday.name;
+                    // .fc-daygrid-day-top은 FullCalendar 기본 CSS가 row-reverse라
+                    // 날짜 숫자(<a>) 뒤에 넣어야 화면에는 숫자 반대편(왼쪽)에 뜬다.
+                    topEl.appendChild(labelEl);
+                }
+            });
+        }
+
         // ---------- FullCalendar ----------
         var baseOptions = {
             initialView: 'dayGridMonth',
             locale: 'ko',
             eventColor: style.getPropertyValue('--blue').trim(),
-            dayCellClassNames: function (arg) {
-                if (arg.isOther) return [];
-                return KR_HOLIDAYS[toDateStr(arg.date)] ? ['holiday'] : [];
-            },
-            dayCellDidMount: function (arg) {
-                // 지금 보고 있는 달이 아니라 앞/뒤 달이 흐리게 걸쳐 보이는 칸(예: 9월 화면에
-                // 10월 1~3일)에는 그 달의 공휴일 정보를 굳이 겹쳐 보여주지 않는다.
-                if (arg.isOther) return;
-                var holiday = KR_HOLIDAYS[toDateStr(arg.date)];
-                if (!holiday) return;
-                arg.el.title = holiday.name;
-                if (holiday.label) {
-                    var topEl = arg.el.querySelector('.fc-daygrid-day-top');
-                    if (topEl) {
-                        var labelEl = document.createElement('div');
-                        labelEl.className = 'holiday-label';
-                        labelEl.textContent = holiday.name;
-                        // .fc-daygrid-day-top은 FullCalendar 기본 CSS가 row-reverse라
-                        // 날짜 숫자(<a>) 뒤에 넣어야 화면에는 숫자 반대편(왼쪽)에 뜬다.
-                        topEl.appendChild(labelEl);
-                    }
-                }
-            },
+            datesSet: function () { applyHolidayStyling(); },
             eventContent: function (arg) {
                 var dot = document.createElement('div');
                 dot.className = 'fc-daygrid-event-dot';
