@@ -249,6 +249,18 @@ function initGroupwareCalendar(elId, fcOptions) {
             initialView: 'dayGridMonth',
             locale: 'ko',
             eventColor: style.getPropertyValue('--blue').trim(),
+            eventContent: function (arg) {
+                var dot = document.createElement('div');
+                dot.className = 'fc-daygrid-event-dot';
+                dot.style.borderColor = arg.event.backgroundColor || style.getPropertyValue('--blue').trim();
+                var timeEl = document.createElement('div');
+                timeEl.className = 'fc-event-time';
+                timeEl.textContent = timeKorean(arg.event.startStr.slice(11, 16));
+                var titleEl = document.createElement('div');
+                titleEl.className = 'fc-event-title';
+                titleEl.textContent = arg.event.title;
+                return { domNodes: [dot, timeEl, titleEl] };
+            },
             events: function (fetchInfo, successCallback, failureCallback) {
                 var start = fetchInfo.start.toISOString().slice(0, 10);
                 var end = fetchInfo.end.toISOString().slice(0, 10);
