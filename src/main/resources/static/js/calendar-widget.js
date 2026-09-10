@@ -408,8 +408,12 @@ function initGroupwareCalendar(elId, fcOptions) {
         var calendar = new FullCalendar.Calendar(calendarEl, Object.assign(baseOptions, fcOptions || {}));
         calendar.render();
 
-        // 홈 화면의 "오늘 일정" 카드처럼, 캘린더 바깥의 다른 버튼에서도 이 캘린더의
-        // 하루 일정 목록 모달을 띄울 수 있게 열어둔다(예: home.html의 상단 통계 카드).
-        window.openGroupwareDayModal = openDayModal;
+        // 캘린더 바깥의 다른 버튼에서도 이 모달들을 띄울 수 있게 열어둔다
+        // (예: home.html의 "오늘 일정"/"다가오는 일정" 카드, calendar/index.html
+        // 상단의 "+ 일정 추가" 버튼).
+        window.groupwareCalendar = {
+            openDayModal: openDayModal,
+            openNewEventModal: openNewEventModal
+        };
     });
 }

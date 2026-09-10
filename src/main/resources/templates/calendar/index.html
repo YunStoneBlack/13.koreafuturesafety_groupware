@@ -19,7 +19,8 @@
                 <h1>일정공유</h1>
                 <p class="page-sub">전 직원이 함께 보는 캘린더입니다. 날짜를 클릭하면 그날의 일정을 볼 수 있습니다.</p>
             </div>
-            <a class="btn btn-primary" th:href="@{/calendar/new}">+ 일정 추가</a>
+            <button type="button" class="btn btn-primary" id="topAddEventBtn"
+                    th:attr="data-today=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">+ 일정 추가</button>
         </div>
 
         <div class="cal-embed">
@@ -30,6 +31,11 @@
 
         <script>
             initGroupwareCalendar('calendar', { height: 'auto' });
+            document.getElementById('topAddEventBtn').addEventListener('click', function () {
+                if (window.groupwareCalendar) {
+                    window.groupwareCalendar.openNewEventModal(this.getAttribute('data-today'));
+                }
+            });
         </script>
     </main>
 </div>

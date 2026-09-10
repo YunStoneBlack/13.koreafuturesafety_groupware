@@ -80,11 +80,12 @@
                         <a class="action" th:href="@{/calendar}">캘린더 →</a>
                     </div>
                     <div class="rows">
-                        <a class="row" th:each="e : ${upcomingEvents}" th:href="@{/calendar/{id}/edit(id=${e.id})}">
+                        <div class="row upcoming-event-row" th:each="e : ${upcomingEvents}"
+                             th:attr="data-date=${#temporals.format(e.startDateTime, 'yyyy-MM-dd')}" style="cursor:pointer;">
                             <span class="title" th:text="${e.title}">일정</span>
                             <span class="dday num" th:classappend="${e.ddayClass}" th:text="${e.ddayLabel}">D-0</span>
                             <span class="meta num" th:text="${#temporals.format(e.startDateTime, 'MM.dd HH:mm')}">일시</span>
-                        </a>
+                        </div>
                         <div class="empty-note" th:if="${#lists.isEmpty(upcomingEvents)}">예정된 일정이 없습니다.</div>
                     </div>
                 </div>
@@ -123,9 +124,16 @@
                 headerToolbar: { left: 'title', center: '', right: 'prev,next today' }
             });
             document.getElementById('todayStatCard').addEventListener('click', function () {
-                if (window.openGroupwareDayModal) {
-                    window.openGroupwareDayModal(this.getAttribute('data-today'));
+                if (window.groupwareCalendar) {
+                    window.groupwareCalendar.openDayModal(this.getAttribute('data-today'));
                 }
+            });
+            document.querySelectorAll('.upcoming-event-row').forEach(function (row) {
+                row.addEventListener('click', function () {
+                    if (window.groupwareCalendar) {
+                        window.groupwareCalendar.openDayModal(this.getAttribute('data-date'));
+                    }
+                });
             });
         </script>
     </main>
