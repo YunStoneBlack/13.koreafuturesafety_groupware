@@ -3,6 +3,34 @@
  * 그대로 같이 쓴다(로직 중복 방지) - 두 페이지 모두 동일한 id의 모달 마크업
  * (dayModalOverlay/eventDetailOverlay/newEventOverlay)을 갖고 있다고 가정한다.
  */
+
+// 대한민국 공휴일/명절(2026년, 대체공휴일 포함). month2k.com 기준(2026-09
+// 조회) - 매년 사람이 직접 갱신해야 하는 하드코딩 목록이다. 음력 기반(설날/
+// 추석/부처님오신날)이라 해가 바뀌면 날짜가 달라지므로, 다음 해가 되면
+// 'YYYY-MM-DD' 키를 새로 추가해줘야 한다.
+var KR_HOLIDAYS = {
+    '2026-01-01': '신정',
+    '2026-02-16': '설날 연휴',
+    '2026-02-17': '설날',
+    '2026-02-18': '설날 연휴',
+    '2026-03-01': '삼일절',
+    '2026-03-02': '대체공휴일',
+    '2026-05-01': '근로자의 날',
+    '2026-05-05': '어린이날',
+    '2026-05-24': '부처님오신날',
+    '2026-05-25': '대체공휴일',
+    '2026-06-06': '현충일',
+    '2026-08-15': '광복절',
+    '2026-08-17': '대체공휴일',
+    '2026-09-24': '추석 연휴',
+    '2026-09-25': '추석',
+    '2026-09-26': '추석 연휴',
+    '2026-10-03': '개천절',
+    '2026-10-05': '대체공휴일',
+    '2026-10-09': '한글날',
+    '2026-12-25': '기독탄신일'
+};
+
 function initGroupwareCalendar(elId, fcOptions) {
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById(elId);
@@ -312,6 +340,13 @@ function initGroupwareCalendar(elId, fcOptions) {
             initialView: 'dayGridMonth',
             locale: 'ko',
             eventColor: style.getPropertyValue('--blue').trim(),
+            dayCellClassNames: function (arg) {
+                return KR_HOLIDAYS[toDateStr(arg.date)] ? ['holiday'] : [];
+            },
+            dayCellDidMount: function (arg) {
+                var name = KR_HOLIDAYS[toDateStr(arg.date)];
+                if (name) arg.el.title = name;
+            },
             eventContent: function (arg) {
                 var dot = document.createElement('div');
                 dot.className = 'fc-daygrid-event-dot';
