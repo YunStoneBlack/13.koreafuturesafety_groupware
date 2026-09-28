@@ -34,5 +34,7 @@ java -jar target/groupware.jar
 3. `board` (공지사항)
 4. `approval` (전자결재)
 5. `calendar` (일정공유, FullCalendar)
-6. `report` — "준비중" 페이지만 우선, 실제 기능은 별도 프로젝트(보고서 자동화 프로그램)
-   완성 후 이식
+6. `report` — **연결 완료(2026-09-28)**: 메뉴 "보고서 자동화" → `/report/`. 실제 기능은 별도 프로젝트
+   (12-1 보고서 자동화 웹판)가 보고서 PC(윈도우 + 한글)에서 돌고, nginx가 `/report/`를 SSH 역방향 통로로 그 PC에 넘긴다.
+   그룹웨어는 `ReportController`의 `/internal/report-auth`(nginx `auth_request`용 로그인 확인 — 외부 직접 접근은 nginx가 404)와
+   `/report-shell/sidebar`(보고서 화면이 끼워 넣는 사이드바 조각)만 제공. 자세한 구조·nginx 설정은 12-1 저장소 `server/README_DEPLOY.md` 6번.
