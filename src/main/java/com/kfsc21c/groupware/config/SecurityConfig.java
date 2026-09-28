@@ -24,6 +24,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/health", "/login", "/css/**", "/js/**", "/img/**").permitAll()
+                        // nginx auth_request가 부르는 로그인 확인 — 비로그인 시 /login 리다이렉트가 아니라 401을 돌려줘야 해서
+                        // 여기선 열어두고 컨트롤러가 직접 판단한다(외부 직접 접근은 nginx가 막음, ReportController 참고).
+                        .requestMatchers("/internal/report-auth").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
