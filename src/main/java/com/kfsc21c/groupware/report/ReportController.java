@@ -38,7 +38,8 @@ public class ReportController {
 
     @GetMapping("/report-shell/sidebar")
     public String sidebar() {
-        return "fragments/appshell :: sidebar('report')";
+        // 뷰 이름에 붙는 조각 인자는 이름을 붙여야 한다(Thymeleaf: 위치 인자면 "must be named" 오류로 렌더 실패)
+        return "fragments/appshell :: sidebar(active='report')";
     }
 
     @GetMapping("/internal/report-auth")
