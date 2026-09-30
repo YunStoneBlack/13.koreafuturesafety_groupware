@@ -2,8 +2,14 @@ package com.kfsc21c.groupware.report;
 
 import com.kfsc21c.groupware.auth.User;
 import com.kfsc21c.groupware.auth.UserRepository;
+import com.kfsc21c.groupware.staff.Employee;
+import com.kfsc21c.groupware.staff.EmployeeRepository;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +17,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * "보고서 자동화" 메뉴 — 실제 기능은 별도 프로젝트(12-1. 보고서 작성 자동화 프로그램 웹판)가 보고서 PC(윈도우 + 한글)에서
@@ -23,6 +30,10 @@ import org.springframework.web.bind.annotation.GetMapping;
  * 2. {@code /report-shell/sidebar} — 이 그룹웨어의 사이드바 조각만 렌더링해서 돌려준다. 보고서 화면이 이걸 그대로 끼워 넣어
  *    로고·메뉴·관리자 메뉴·프로필·로그아웃까지 그룹웨어와 똑같이 보인다(메뉴가 바뀌어도 자동으로 따라감).
  *
+ * 3. {@code /report-shell/employees} — 직원정보(조직도) 목록 JSON. 보고서 "담당요원" 탭이 이걸 받아 담당요원을 그룹웨어 직원과
+ *    이어 붙인다(이름·전화·메일은 그룹웨어 값을 따라감, 누가 담당요원인지는 보고서 쪽에서 체크). 로그인한 직원이면 누구나 보는
+ *    조직도(/staff)와 같은 범위라 로그인만 확인한다. 로그인 아이디가 이어진 직원은 username도 같이 준다(보고서 달력의 "나만" 보기).
+ *
  * {@code /report} 안내 페이지는 nginx가 /report 를 가로채므로 평소엔 안 쓰이고, nginx 규칙을 되돌렸을 때만 보인다.
  */
 @Controller
@@ -30,6 +41,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ReportController {
 
     private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
+
+    /** 보고서로 넘기는 직원 한 명 — 비밀번호 해시 등 User 엔티티를 그대로 내보내지 않으려고 따로 둔다. */
+    public record ReportEmployee(Long id, String name, String department, String position, String phone, String email,
+                                 String username, boolean loginEnabled) {
+    }
 
     @GetMapping("/report")
     public String comingSoon() {
@@ -40,6 +57,27 @@ public class ReportController {
     public String sidebar() {
         // 뷰 이름에 붙는 조각 인자는 이름을 붙여야 한다(Thymeleaf: 위치 인자면 "must be named" 오류로 렌더 실패)
         return "fragments/appshell :: sidebar(active='report')";
+    }
+
+    @GetMapping("/report-shell/employees")
+    @ResponseBody
+    public List<ReportEmployee> employees() {
+        Map<Long, User> userByEmployee = new HashMap<>();
+        for (User u : userRepository.findAllWithEmployee()) {
+            if (u.getEmployee() != null) userByEmployee.put(u.getEmployee().getId(), u);
+        }
+        return employeeRepository.findAll().stream()
+                .sorted(Comparator.comparing(Employee::getName))
+                .map(e -> {
+                    User u = userByEmployee.get(e.getId());
+                    return new ReportEmployee(e.getId(), e.getName(), e.getDepartment(), nz(e.getPosition()), nz(e.getPhone()),
+                            nz(e.getEmail()), u == null ? "" : u.getUsername(), u != null && u.isEnabled());
+                })
+                .toList();
+    }
+
+    private static String nz(String value) {
+        return value == null ? "" : value;
     }
 
     @GetMapping("/internal/report-auth")
