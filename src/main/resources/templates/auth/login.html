@@ -2,20 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <!-- 폰 화면 폭에 맞추기 — 없으면 폰이 PC 폭(약 980px)으로 그려 통째로 축소해 보여 줘서 글자가 아주 작았음(2026-10-01) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>로그인 - 한국미래안전 그룹웨어</title>
     <link rel="stylesheet" th:href="@{/css/app.css}" />
     <style>
-        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        /* 로그인 화면은 크게(2026-10-01 사용자 "너무 작다" — PC·폰 둘 다). 입력 글자 16px 이상: 아이폰이 입력할 때 화면을 확대하지 않게 */
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
         .login-card {
-            width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line);
-            border-radius: 14px; box-shadow: var(--shadow-card); padding: 36px 34px 30px;
+            width: 100%; max-width: 480px; background: var(--surface); border: 1px solid var(--line);
+            border-radius: 18px; box-shadow: var(--shadow-card); padding: 48px 44px 40px; box-sizing: border-box;
         }
-        .login-card img { height: 45px; display: block; margin: 0 auto 22px; }
-        .login-card h1 { font-size: 17px; text-align: center; margin: 0 0 22px; }
-        .login-msg { font-size: 13px; text-align: center; margin: 0 0 16px; padding: 8px; border-radius: 8px; }
+        .login-card img { height: 64px; display: block; margin: 0 auto 26px; }
+        .login-card h1 { font-size: 24px; text-align: center; margin: 0 0 30px; }
+        .login-card .field { margin-bottom: 20px; }
+        .login-card .field label { font-size: 16px; margin-bottom: 8px; }
+        .login-card .field input[type="text"], .login-card .field input[type="password"] { font-size: 17px; padding: 14px 16px; height: auto; }
+        .login-card .field.checkbox-row input { width: 20px; height: 20px; }
+        .login-card .field.checkbox-row label { font-size: 15.5px; }
+        .login-msg { font-size: 15px; text-align: center; margin: 0 0 18px; padding: 10px; border-radius: 8px; }
         .login-msg.error { background: var(--crit-soft); color: var(--crit); }
         .login-msg.ok { background: var(--green-soft); color: var(--green); }
-        .login-card .btn { width: 100%; justify-content: center; margin-top: 4px; }
+        .login-card .btn { width: 100%; justify-content: center; margin-top: 6px; padding: 15px 18px; font-size: 18px; border-radius: 10px; }
+        @media (max-width: 520px) {
+            body { padding: 16px; align-items: flex-start; padding-top: 12vh; }
+            .login-card { padding: 36px 24px 30px; }
+            .login-card img { height: 56px; }
+            .login-card h1 { font-size: 22px; }
+        }
     </style>
 </head>
 <body>
