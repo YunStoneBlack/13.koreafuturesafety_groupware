@@ -41,6 +41,14 @@ public class KoreanHolidayService {
 
     private final Map<Integer, List<HolidayEntry>> cache = new HashMap<>();
 
+    /** 앞으로의 법정 선거일(2026-10-01 기준, 파이썬 holidays 패키지 0.105 목록과 같음 — 12-1 보고서 웹판 자동 배치도 이 날을 뺀다). */
+    private static final Map<LocalDate, String> ELECTION_DAYS = Map.of(
+            LocalDate.of(2026, 6, 3), "지방선거일",
+            LocalDate.of(2028, 4, 12), "국회의원 선거일",
+            LocalDate.of(2030, 4, 3), "대통령 선거일",
+            LocalDate.of(2030, 6, 12), "지방선거일",
+            LocalDate.of(2032, 4, 14), "국회의원 선거일");
+
     public synchronized List<HolidayEntry> forYear(int year) {
         return cache.computeIfAbsent(year, this::compute);
     }
@@ -64,6 +72,17 @@ public class KoreanHolidayService {
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 10, 3), "개천절");
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 10, 9), "한글날");
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, lunarToSolar(year, 4, 8), "부처님오신날");
+        // 제헌절 — 2008년부터 쉬지 않다가 2026년부터 다시 공휴일(대체공휴일도 적용 — 2027·2032년은 토요일이라 다음 월요일)
+        if (year >= 2026) {
+            addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 7, 17), "제헌절");
+        }
+
+        // ---- 선거일(공휴일, 대체공휴일 없음) — 법정 선거일이라 계산이 아니라 날짜 목록. 보궐·조기 선거나 임시공휴일은 정해지면 여기에 추가 ----
+        ELECTION_DAYS.forEach((date, name) -> {
+            if (date.getYear() == year) {
+                put(holidays, hitCount, date, name, true);
+            }
+        });
 
         // ---- 음력 3일 연휴(설날/추석) + 일요일(또는 다른 공휴일과 겹침) 대체공휴일 ----
         addLunarCluster(holidays, hitCount, substitutedSearchPoints, substituteChecks, lunarToSolar(year, 1, 1), "설날");
