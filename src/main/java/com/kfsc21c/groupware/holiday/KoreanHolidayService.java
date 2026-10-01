@@ -65,7 +65,9 @@ public class KoreanHolidayService {
             put(holidays, hitCount, LocalDate.of(year, 5, 1), "근로자의 날", true);
         }
         put(holidays, hitCount, LocalDate.of(year, 6, 6), "현충일", true);
-        put(holidays, hitCount, LocalDate.of(year, 12, 25), "기독탄신일", true);
+        if (year < 2023) {
+            put(holidays, hitCount, LocalDate.of(year, 12, 25), "기독탄신일", true);
+        }
 
         // ---- 고정일 + 토/일(또는 다른 공휴일과 겹침) 대체공휴일 ----
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 3, 1), "삼일절");
@@ -74,6 +76,10 @@ public class KoreanHolidayService {
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 10, 3), "개천절");
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 10, 9), "한글날");
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, lunarToSolar(year, 4, 8), "부처님오신날");
+        // 기독탄신일 — 2023년부터 토/일이면 대체공휴일(2027·2032년 12/25 토요일 → 12/27 월요일)
+        if (year >= 2023) {
+            addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 12, 25), "기독탄신일");
+        }
         // 노동절(옛 근로자의 날) — 2026년부터 이름이 바뀌고 대체공휴일도 적용(2027년 5/1 토요일 → 5/3 월요일, 회사도 실제로 쉼 — 사용자 2026-10-01)
         if (year >= 2026) {
             addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 5, 1), "노동절");
@@ -123,7 +129,7 @@ public class KoreanHolidayService {
         put(holidays, hitCount, date, name, true);
         substituteChecks.add(() -> {
             if (isWeekend(date) || hitCount.getOrDefault(date, 0) > 1) {
-                assignSubstitute(holidays, substitutedSearchPoints, date);
+                assignSubstitute(holidays, substitutedSearchPoints, date, date);
             }
         });
     }
@@ -137,26 +143,23 @@ public class KoreanHolidayService {
         put(holidays, hitCount, middle, name, true);
         put(holidays, hitCount, after, name + " 연휴", false);
         substituteChecks.add(() -> {
-            boolean sundayOrOverlap = before.getDayOfWeek() == DayOfWeek.SUNDAY
-                    || middle.getDayOfWeek() == DayOfWeek.SUNDAY
-                    || after.getDayOfWeek() == DayOfWeek.SUNDAY
-                    || hitCount.getOrDefault(before, 0) > 1
-                    || hitCount.getOrDefault(middle, 0) > 1
-                    || hitCount.getOrDefault(after, 0) > 1;
-            if (sundayOrOverlap) {
-                assignSubstitute(holidays, substitutedSearchPoints, after);
+            // 연휴 중 일요일이거나 다른 공휴일과 겹친 날(= 잃은 날)마다 연휴 끝 다음 첫 평일로 하루씩
+            for (LocalDate d : List.of(before, middle, after)) {
+                if (d.getDayOfWeek() == DayOfWeek.SUNDAY || hitCount.getOrDefault(d, 0) > 1) {
+                    assignSubstitute(holidays, substitutedSearchPoints, d, after);
+                }
             }
         });
     }
 
     /**
-     * searchAfter(트리거가 된 날짜/연휴 끝날) 기준으로 대체공휴일을 하나만 배정한다.
-     * 같은 searchAfter에 대해 두 번째로 불리면(예: 어린이날/부처님오신날처럼 서로 다른
-     * 공휴일이 같은 날짜를 트리거로 공유하는 경우) 조용히 무시해서 중복 배정을 막는다.
+     * 잃은 날(lostDay — 주말이거나 공휴일끼리 겹친 날) 하나당 대체공휴일 하나를 searchAfter 다음 첫 평일에 배정한다.
+     * 같은 잃은 날로 두 번 불리면(어린이날+부처님오신날 2025-05-05, 개천절+추석 2028-10-03처럼 겹친 공휴일이 각자 부르는 경우)
+     * 조용히 무시해 하루만 준다(2026-10-01 — 예전엔 연휴 끝날 기준으로 막아서 2028년에 10/5·10/6 이틀이 나왔음).
      */
-    private void assignSubstitute(Map<LocalDate, HolidayEntry> holidays, Set<LocalDate> substitutedSearchPoints,
-                                   LocalDate searchAfter) {
-        if (!substitutedSearchPoints.add(searchAfter)) {
+    private void assignSubstitute(Map<LocalDate, HolidayEntry> holidays, Set<LocalDate> substitutedLostDays,
+                                   LocalDate lostDay, LocalDate searchAfter) {
+        if (!substitutedLostDays.add(lostDay)) {
             return;
         }
         LocalDate d = searchAfter.plusDays(1);
