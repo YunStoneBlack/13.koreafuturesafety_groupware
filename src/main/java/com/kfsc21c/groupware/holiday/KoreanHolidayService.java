@@ -41,13 +41,34 @@ public class KoreanHolidayService {
 
     private final Map<Integer, List<HolidayEntry>> cache = new HashMap<>();
 
-    /** 앞으로의 법정 선거일(2026-10-01 기준, 파이썬 holidays 패키지 0.105 목록과 같음 — 12-1 보고서 웹판 자동 배치도 이 날을 뺀다). */
-    private static final Map<LocalDate, String> ELECTION_DAYS = Map.of(
-            LocalDate.of(2026, 6, 3), "지방선거일",
-            LocalDate.of(2028, 4, 12), "국회의원 선거일",
-            LocalDate.of(2030, 4, 3), "대통령 선거일",
-            LocalDate.of(2030, 6, 12), "지방선거일",
-            LocalDate.of(2032, 4, 14), "국회의원 선거일");
+    /**
+     * 선거일·임시공휴일 — 계산이 아니라 날짜 목록(2026-10-01, 파이썬 holidays 패키지 0.105 목록과 같음 — 12-1 보고서 웹판 자동 배치도
+     * 같은 날을 뺀다). 미래 선거일은 법정 날짜, 보궐·조기 선거나 새 임시공휴일이 정해지면 여기에 추가.
+     */
+    private static final Map<LocalDate, String> ELECTION_DAYS = Map.ofEntries(
+            Map.entry(LocalDate.of(2023, 10, 2), "임시공휴일"),
+            Map.entry(LocalDate.of(2024, 4, 10), "국회의원 선거일"),
+            Map.entry(LocalDate.of(2024, 10, 1), "국군의 날(임시공휴일)"),
+            Map.entry(LocalDate.of(2025, 1, 27), "임시공휴일"),
+            Map.entry(LocalDate.of(2025, 6, 3), "대통령 선거일"),
+            Map.entry(LocalDate.of(2026, 6, 3), "지방선거일"),
+            Map.entry(LocalDate.of(2028, 4, 12), "국회의원 선거일"),
+            Map.entry(LocalDate.of(2030, 4, 3), "대통령 선거일"),
+            Map.entry(LocalDate.of(2030, 6, 12), "지방선거일"),
+            Map.entry(LocalDate.of(2032, 4, 14), "국회의원 선거일"),
+            Map.entry(LocalDate.of(2034, 6, 14), "지방선거일"),
+            Map.entry(LocalDate.of(2035, 4, 4), "대통령 선거일"),
+            Map.entry(LocalDate.of(2036, 4, 9), "국회의원 선거일"),
+            Map.entry(LocalDate.of(2038, 6, 2), "지방선거일"),
+            Map.entry(LocalDate.of(2040, 4, 4), "대통령 선거일"),
+            Map.entry(LocalDate.of(2040, 4, 11), "국회의원 선거일"),
+            Map.entry(LocalDate.of(2042, 6, 4), "지방선거일"),
+            Map.entry(LocalDate.of(2044, 4, 13), "국회의원 선거일"),
+            Map.entry(LocalDate.of(2045, 4, 5), "대통령 선거일"),
+            Map.entry(LocalDate.of(2046, 6, 13), "지방선거일"),
+            Map.entry(LocalDate.of(2048, 4, 8), "국회의원 선거일"),
+            Map.entry(LocalDate.of(2050, 4, 6), "대통령 선거일"),
+            Map.entry(LocalDate.of(2050, 6, 1), "지방선거일"));
 
     public synchronized List<HolidayEntry> forYear(int year) {
         return cache.computeIfAbsent(year, this::compute);
@@ -89,7 +110,7 @@ public class KoreanHolidayService {
             addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 7, 17), "제헌절");
         }
 
-        // ---- 선거일(공휴일, 대체공휴일 없음) — 법정 선거일이라 계산이 아니라 날짜 목록. 보궐·조기 선거나 임시공휴일은 정해지면 여기에 추가 ----
+        // ---- 선거일·임시공휴일(대체공휴일 없음) — ELECTION_DAYS 목록 ----
         ELECTION_DAYS.forEach((date, name) -> {
             if (date.getYear() == year) {
                 put(holidays, hitCount, date, name, true);
