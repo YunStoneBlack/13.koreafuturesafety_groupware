@@ -29,7 +29,7 @@ import java.util.Set;
  * - 서로 다른 공휴일끼리 같은 날짜에 겹쳐도 발생한다(신정/현충일/근로자의 날 제외) -
  *   실제로 2025년 5/5(월) 어린이날과 부처님오신날이 겹쳐서 5/6(화)이 대체공휴일로
  *   지정됐는데, 이 케이스로 검증했다.
- * - 신정/현충일/근로자의 날: 대체공휴일 적용 안 됨.
+ * - 신정/현충일(2025년까지의 근로자의 날 포함): 대체공휴일 적용 안 됨. 2026년부터 노동절·제헌절은 토/일 대체공휴일 적용.
  * 대체공휴일 날짜는 해당 연휴(또는 해당일) 다음날부터 훑어서, 토·일도 아니고 이미
  * 다른 공휴일도 아닌 첫 번째 날로 정한다. 이 로직은 2026년 실제 공휴일(3.1절->3/2,
  * 광복절->8/17, 개천절->10/5, 부처님오신날->5/25 대체, 설날·추석·어린이날·한글날은
@@ -61,7 +61,9 @@ public class KoreanHolidayService {
 
         // ---- 고정일, 대체공휴일 없음 ----
         put(holidays, hitCount, LocalDate.of(year, 1, 1), "신정", true);
-        put(holidays, hitCount, LocalDate.of(year, 5, 1), "근로자의 날", true);
+        if (year < 2026) {
+            put(holidays, hitCount, LocalDate.of(year, 5, 1), "근로자의 날", true);
+        }
         put(holidays, hitCount, LocalDate.of(year, 6, 6), "현충일", true);
         put(holidays, hitCount, LocalDate.of(year, 12, 25), "기독탄신일", true);
 
@@ -72,6 +74,10 @@ public class KoreanHolidayService {
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 10, 3), "개천절");
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 10, 9), "한글날");
         addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, lunarToSolar(year, 4, 8), "부처님오신날");
+        // 노동절(옛 근로자의 날) — 2026년부터 이름이 바뀌고 대체공휴일도 적용(2027년 5/1 토요일 → 5/3 월요일, 회사도 실제로 쉼 — 사용자 2026-10-01)
+        if (year >= 2026) {
+            addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 5, 1), "노동절");
+        }
         // 제헌절 — 2008년부터 쉬지 않다가 2026년부터 다시 공휴일(대체공휴일도 적용 — 2027·2032년은 토요일이라 다음 월요일)
         if (year >= 2026) {
             addSatSunEligible(holidays, hitCount, substitutedSearchPoints, substituteChecks, LocalDate.of(year, 7, 17), "제헌절");
