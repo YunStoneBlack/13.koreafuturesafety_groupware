@@ -37,6 +37,11 @@
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15V9.5L10 6l7 3.5V15"/><path d="M7.5 15v-4h5v4"/></svg>
             보고서 자동화
         </a>
+        <!-- 서류 자동화(2026-10-06) — 보고서 웹판(12-1) 안의 착수계·완수계 화면. 그 화면이 이 사이드바를 받아 이 줄을 켠다(shell.js) -->
+        <a class="nav-item" th:classappend="${active == 'docs'} ? 'active'" th:href="@{/report/docs.html}">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.7h6.5L15 6.2v11.1H5z"/><path d="M11.5 2.7v3.5H15M7.5 10h5M7.5 13h5"/></svg>
+            서류 자동화
+        </a>
     </nav>
 
     <div sec:authorize="hasRole('ADMIN')">
