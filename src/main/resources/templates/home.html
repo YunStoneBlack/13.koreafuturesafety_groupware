@@ -22,6 +22,20 @@
             <div class="num page-sub" th:text="${#temporals.format(#temporals.createNow(), 'yyyy.MM.dd (E)')}">오늘</div>
         </div>
 
+        <!-- 보고서 자동화·서류 자동화 큰 입구(2026-10-08 — 왼쪽 메뉴가 작아 들어가기 불편: 폰·PC). 두 칸 나란히, 합친 너비 = 본문(달력) 너비 -->
+        <div class="app-doors">
+            <a class="app-door" th:href="@{/report/}">
+                <span class="door-ico"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15V9.5L10 6l7 3.5V15"/><path d="M7.5 15v-4h5v4"/></svg></span>
+                <span class="door-text"><b>보고서 자동화</b><small>현장별 기술지도 결과보고서 작성 · PDF · K2B 제출</small></span>
+                <span class="door-go">바로가기 →</span>
+            </a>
+            <a class="app-door" th:href="@{/report/docs.html}">
+                <span class="door-ico"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.7h6.5L15 6.2v11.1H5z"/><path d="M11.5 2.7v3.5H15M7.5 10h5M7.5 13h5"/></svg></span>
+                <span class="door-text"><b>서류 자동화</b><small>용역 계약 · 착수계 · 완수계</small></span>
+                <span class="door-go">바로가기 →</span>
+            </a>
+        </div>
+
         <div class="stats">
             <a class="stat" th:href="@{/approval}">
                 <div class="label">결재 대기</div>

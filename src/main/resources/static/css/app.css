@@ -82,6 +82,27 @@ h1 { font-size: 21px; font-weight: 700; margin: 0 0 4px; text-wrap: balance; }
 .crumb a { color: var(--blue); font-weight: 500; }
 .crumb .sep { color: var(--faint); margin: 0 6px; }
 
+/* ---------- 홈: 보고서 자동화·서류 자동화 큰 입구(2026-10-08) — 두 칸 나란히, 본문 너비 꽉 ---------- */
+.app-doors { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.app-door { display: flex; align-items: center; gap: 16px; min-height: 104px; padding: 20px 22px; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card); color: var(--ink);
+  transition: border-color .15s, transform .15s, background .15s; }
+.app-door:hover { border-color: var(--blue); background: var(--blue-soft); transform: translateY(-1px); }
+.app-door .door-ico { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 14px; background: var(--blue-soft); color: var(--blue); }
+.app-door .door-ico svg { width: 30px; height: 30px; }
+.app-door .door-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+.app-door .door-text b { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+.app-door .door-text small { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.app-door .door-go { flex: none; font-size: 13px; font-weight: 600; color: var(--blue); }
+@media (max-width: 760px) {
+  .app-doors { gap: 8px; }
+  .app-door { flex-direction: column; align-items: flex-start; gap: 10px; min-height: 0; padding: 16px 14px; }
+  .app-door .door-ico { width: 44px; height: 44px; border-radius: 12px; }
+  .app-door .door-ico svg { width: 24px; height: 24px; }
+  .app-door .door-text b { font-size: 17px; }
+  .app-door .door-go { display: none; }
+}
+
 /* ---------- stat tiles ---------- */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
 .stat { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 16px 14px; box-shadow: var(--shadow-card); transition: border-color .15s, transform .15s; }
