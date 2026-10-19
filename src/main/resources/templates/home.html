@@ -6,150 +6,46 @@
     <meta name="_csrf_parameter" th:content="${_csrf.parameterName}" />
     <title>한국미래안전 그룹웨어</title>
     <link rel="stylesheet" th:href="@{/css/app.css}" />
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-    <script th:src="@{/js/calendar-widget.js}"></script>
 </head>
 <body>
 <div class="app">
     <div th:replace="~{fragments/appshell :: sidebar('home')}"></div>
 
-    <main class="main">
+    <!-- 홈 = 보고서 자동화·서류 자동화 입구 카드 두 개만(2026-10-20 사용자 — 화면 가운데 크게, 카드 안에 법별 버튼).
+         공지·결재·일정·직원 칸은 왼쪽 메뉴 각 화면에서. 폰은 카드를 위아래로 쌓아 위쪽에(app.css .home-only) -->
+    <main class="main home-only">
         <div class="topline">
             <div>
                 <h1 th:text="${currentUser != null ? currentUser.displayName + '님, 안녕하세요' : '안녕하세요'}">안녕하세요</h1>
-                <p class="page-sub">오늘 확인할 일정과 결재 현황을 정리했습니다.</p>
             </div>
             <div class="num page-sub" th:text="${#temporals.format(#temporals.createNow(), 'yyyy.MM.dd (E)')}">오늘</div>
         </div>
 
-        <!-- 보고서 자동화·서류 자동화 큰 입구(2026-10-08 — 왼쪽 메뉴가 작아 들어가기 불편: 폰·PC). 두 칸 나란히, 합친 너비 = 본문(달력) 너비 -->
-        <div class="app-doors">
-            <a class="app-door" th:href="@{/report/}">
-                <span class="door-ico"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15V9.5L10 6l7 3.5V15"/><path d="M7.5 15v-4h5v4"/></svg></span>
-                <span class="door-text"><b>보고서 자동화</b><small>현장별 기술지도 결과보고서 작성 · PDF · K2B 제출</small></span>
-                <span class="door-go">바로가기 →</span>
-            </a>
-            <a class="app-door" th:href="@{/report/docs.html}">
-                <span class="door-ico"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.7h6.5L15 6.2v11.1H5z"/><path d="M11.5 2.7v3.5H15M7.5 10h5M7.5 13h5"/></svg></span>
-                <span class="door-text"><b>서류 자동화</b><small>용역 계약 · 착수계 · 완수계</small></span>
-                <span class="door-go">바로가기 →</span>
-            </a>
-        </div>
-
-        <div class="stats">
-            <a class="stat" th:href="@{/approval}">
-                <div class="label">결재 대기</div>
-                <div class="value num" th:text="${pendingCount} + '건'">0건</div>
-            </a>
-            <div class="stat clickable" id="todayStatCard"
-                 th:attr="data-today=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
-                <div class="label">오늘 일정</div>
-                <div class="value num" th:text="${todayEventCount} + '건'">0건</div>
-            </div>
-            <a class="stat" th:href="@{/board}">
-                <div class="label">이번 주 공지</div>
-                <div class="value num" th:text="${weekPostCount} + '건'">0건</div>
-            </a>
-            <a class="stat" th:href="@{/staff}">
-                <div class="label">전체 직원</div>
-                <div class="value num" th:text="${employeeCount} + '명'">0명</div>
-            </a>
-        </div>
-
-        <div class="stats" style="grid-template-columns: 1.5fr 1fr; align-items: start;">
-            <div>
-                <div class="panel">
-                    <div class="panel-head">
-                        <h2>공지사항</h2>
-                        <a class="action" th:href="@{/board}">전체 보기 →</a>
+        <div class="home-center">
+            <div class="app-doors">
+                <div class="app-door">
+                    <div class="door-top">
+                        <span class="door-ico"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15V9.5L10 6l7 3.5V15"/><path d="M7.5 15v-4h5v4"/></svg></span>
+                        <span class="door-text"><b>보고서 자동화</b><small>결과보고서 작성 · PDF · 제출</small></span>
                     </div>
-                    <div class="rows">
-                        <a class="row" th:each="p : ${recentPosts}" th:href="@{/board/{id}(id=${p.id})}">
-                            <span class="title" th:text="${p.title}">제목</span>
-                            <span class="meta num" th:text="${#temporals.format(p.createdAt, 'MM.dd')}">날짜</span>
-                        </a>
-                        <div class="empty-note" th:if="${#lists.isEmpty(recentPosts)}">등록된 공지사항이 없습니다.</div>
+                    <div class="door-btns n2">
+                        <a class="door-btn" th:href="@{/report/dashboard.html}">산안법</a>
+                        <a class="door-btn" th:href="@{/report/sitok.html}">시특법</a>
                     </div>
                 </div>
-
-                <div class="panel">
-                    <div class="panel-head">
-                        <h2>전자결재 · 대기 중</h2>
-                        <a class="action" th:href="@{/approval}">전체 보기 →</a>
+                <div class="app-door">
+                    <div class="door-top">
+                        <span class="door-ico"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.7h6.5L15 6.2v11.1H5z"/><path d="M11.5 2.7v3.5H15M7.5 10h5M7.5 13h5"/></svg></span>
+                        <span class="door-text"><b>서류 자동화</b><small>용역 계약 · 착수계 · 완수계 · 실적</small></span>
                     </div>
-                    <div class="rows">
-                        <a class="row" th:each="a : ${pendingApprovals}" th:href="@{/approval/{id}(id=${a.id})}">
-                            <span class="title" th:text="${a.title} + ' — ' + ${a.requester.displayName}">제목</span>
-                            <span class="status-pill pending">대기</span>
-                        </a>
-                        <div class="empty-note" th:if="${#lists.isEmpty(pendingApprovals)}">대기 중인 결재가 없습니다.</div>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <div class="panel">
-                    <div class="panel-head">
-                        <h2>다가오는 일정</h2>
-                        <a class="action" th:href="@{/calendar}">캘린더 →</a>
-                    </div>
-                    <div class="rows">
-                        <div class="row upcoming-event-row" th:each="e : ${upcomingEvents}"
-                             th:attr="data-date=${#temporals.format(e.startDateTime, 'yyyy-MM-dd')}" style="cursor:pointer;">
-                            <span class="title" th:text="${e.title}">일정</span>
-                            <span class="dday num" th:classappend="${e.ddayClass}" th:text="${e.ddayLabel}">D-0</span>
-                            <span class="meta num" th:text="${#temporals.format(e.startDateTime, 'MM.dd HH:mm')}">일시</span>
-                        </div>
-                        <div class="empty-note" th:if="${#lists.isEmpty(upcomingEvents)}">예정된 일정이 없습니다.</div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-head">
-                        <h2>직원정보</h2>
-                        <a class="action" th:href="@{/staff}">조직도 →</a>
-                    </div>
-                    <div class="rows">
-                        <div class="row" th:each="entry : ${deptCounts}">
-                            <span class="title" th:text="${entry.key}">부서</span>
-                            <span class="meta num" th:text="${entry.value} + '명'">0명</span>
-                        </div>
-                        <div class="empty-note" th:if="${#maps.isEmpty(deptCounts)}">등록된 직원이 없습니다.</div>
+                    <div class="door-btns n3">
+                        <a class="door-btn" th:href="@{/report/docs.html}">산안법</a>
+                        <a class="door-btn" th:href="@{/report/sitok-docs.html}">시특법</a>
+                        <a class="door-btn" th:href="@{/report/docs-performance.html}">실적</a>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="panel">
-            <div class="panel-head">
-                <h2>이번 달 캘린더</h2>
-                <a class="action" th:href="@{/calendar}">전체화면 캘린더 →</a>
-            </div>
-            <div class="panel-body">
-                <div id="home-calendar"></div>
-            </div>
-        </div>
-
-        <div th:replace="~{fragments/calendar-modals :: modals}"></div>
-
-        <script>
-            initGroupwareCalendar('home-calendar', {
-                height: 560,
-                headerToolbar: { left: 'title', center: '', right: 'prev,next today' }
-            });
-            document.getElementById('todayStatCard').addEventListener('click', function () {
-                if (window.groupwareCalendar) {
-                    window.groupwareCalendar.openDayModal(this.getAttribute('data-today'));
-                }
-            });
-            document.querySelectorAll('.upcoming-event-row').forEach(function (row) {
-                row.addEventListener('click', function () {
-                    if (window.groupwareCalendar) {
-                        window.groupwareCalendar.openDayModal(this.getAttribute('data-date'));
-                    }
-                });
-            });
-        </script>
     </main>
 </div>
 </body>
