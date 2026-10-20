@@ -41,6 +41,8 @@
         <div class="nav-sub">
             <a class="nav-subitem" data-law="sanan" th:href="@{/report/dashboard.html}">산안법</a>
             <a class="nav-subitem" data-law="sitok" th:href="@{/report/sitok.html}">시특법</a>
+            <!-- 설정(2026-10-20) — 산안법·시특법 보고서 설정 한 화면(보고서 웹판 settings.html, 그 화면이 이 줄을 켬) -->
+            <a class="nav-subitem" data-law="set" th:href="@{/report/settings.html}">설정</a>
         </div>
         <!-- 서류 자동화(2026-10-06) — 보고서 웹판(12-1) 안의 착수계·완수계 화면. 그 화면이 이 사이드바를 받아 이 줄을 켠다(shell.js) -->
         <a class="nav-item" data-menu="docs" th:classappend="${active == 'docs'} ? 'active'" th:href="@{/report/docs.html}">
