@@ -28,9 +28,16 @@
                         <span class="door-ico"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15V9.5L10 6l7 3.5V15"/><path d="M7.5 15v-4h5v4"/></svg></span>
                         <span class="door-text"><b>보고서 자동화</b><small>결과보고서 작성 · PDF · 제출</small></span>
                     </div>
-                    <div class="door-btns n2">
-                        <a class="door-btn" th:href="@{/report/dashboard.html}">산안법</a>
-                        <a class="door-btn" th:href="@{/report/sitok.html}">시특법</a>
+                    <!-- 둘째 줄 내진성능평가·결함조사(2026-10-22 사용자 "산안법 시특법 버튼 아래에 가로배치로") -->
+                    <div class="door-stack">
+                        <div class="door-btns n2">
+                            <a class="door-btn" th:href="@{/report/dashboard.html}">산안법</a>
+                            <a class="door-btn" th:href="@{/report/sitok.html}">시특법</a>
+                        </div>
+                        <div class="door-btns n2">
+                            <a class="door-btn" th:href="@{/report/seismic.html}">내진성능평가</a>
+                            <a class="door-btn" th:href="@{/report/defect-survey.html}">결함조사</a>
+                        </div>
                     </div>
                 </div>
                 <div class="app-door">
