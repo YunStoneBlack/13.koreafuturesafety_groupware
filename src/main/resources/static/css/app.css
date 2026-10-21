@@ -92,7 +92,7 @@ h1 { font-size: 21px; font-weight: 700; margin: 0 0 4px; text-wrap: balance; }
 .main.home-only { max-width: none; display: flex; flex-direction: column; min-height: 100vh; }
 .home-center { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px 0 72px; }
 .app-doors { width: 100%; max-width: 1440px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
-.app-door { display: flex; flex-direction: column; gap: 48px; min-height: 440px; padding: 56px 52px 52px; border-radius: 18px;
+.app-door { position: relative; display: flex; flex-direction: column; gap: 48px; min-height: 440px; padding: 56px 52px 52px; border-radius: 18px;
   background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card); color: var(--ink); }
 .app-door .door-top { display: flex; align-items: center; gap: 28px; }
 .app-door .door-ico { flex: none; display: grid; place-items: center; width: 120px; height: 120px; border-radius: 26px; background: var(--blue-soft); color: var(--blue); }
@@ -105,6 +105,12 @@ h1 { font-size: 21px; font-weight: 700; margin: 0 0 4px; text-wrap: balance; }
 .door-btns.n3 { grid-template-columns: 1fr 1fr 1fr; }
 .door-stack { display: flex; flex-direction: column; gap: 14px; margin-top: auto; } /* 보고서 자동화 카드 두 줄(10/22) — 카드 아래에 붙임 */
 .door-stack .door-btns { margin-top: 0; }
+/* 카드 오른쪽 위 설정 단추(10/22) — 작게, 제목보다 눈에 덜 띄게 */
+.door-set { position: absolute; top: 26px; right: 26px; display: inline-flex; align-items: center; gap: 7px; height: 44px; padding: 0 18px 0 14px;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 18px; font-weight: 600;
+  transition: border-color .15s, color .15s; }
+.door-set svg { width: 20px; height: 20px; }
+.door-set:hover { border-color: var(--blue); color: var(--blue); }
 .door-btn { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 96px; padding: 0 28px; white-space: nowrap;
   border: 1px solid var(--line); border-radius: 14px; background: var(--paper); color: var(--ink); font-size: 26px; font-weight: 700;
   transition: border-color .15s, background .15s, color .15s, transform .15s; }
@@ -115,6 +121,7 @@ h1 { font-size: 21px; font-weight: 700; margin: 0 0 4px; text-wrap: balance; }
 @media (max-width: 1600px) and (min-width: 1101px) {
   .app-door { padding: 48px 40px 44px; }
   .door-btn { padding: 0 20px; font-size: 23px; }
+  .door-set { top: 18px; right: 20px; } /* 좁은 PC — 제목 줄과 겹치지 않게 모서리 쪽으로 */
 }
 /* 폰(이 화면엔 viewport 메타가 없어 PC 폭 약 980px로 줄여 보여 줌)·좁은 창 — 카드를 위아래로 쌓아 위쪽에 */
 @media (max-width: 1100px) {
