@@ -12,8 +12,10 @@
   비밀번호는 `GROUPWARE_ADMIN_INITIAL_PASSWORD` 환경변수로 지정하거나, 지정 안 하면
   무작위 생성 후 기동 로그에 한 번만 출력됨(재기동 시 계정이 이미 있으면 아무 것도 안 함)
 - `/health` — 헬스체크
-- `/` — 로그인 후 홈: 보고서 자동화 [산안법][시특법] · 서류 자동화 [산안법][시특법][실적] 카드 두 개만(2026-10-20 — 공지·결재·일정 칸은 왼쪽 메뉴 각 화면)
-- 왼쪽 메뉴(`fragments/appshell.html`): 보고서 자동화 › 산안법·시특법·설정(/report/settings.html), 서류 자동화 › 산안법·시특법·실적·설정(/report/docs-settings.html) — 설정 줄 2026-10-20(5b5df7c·fb0bb19 배포)
+- `/` — 로그인 후 홈: 보고서 자동화 [산안법][시특법] / [내진성능평가][결함조사] 두 줄 · 서류 자동화 [산안법][시특법][실적] 카드 두 개만(2026-10-20 — 공지·결재·일정 칸은 왼쪽 메뉴 각 화면),
+  카드마다 오른쪽 위 ⚙ 설정 단추(보고서 /report/settings.html, 서류 /report/docs-settings.html — 2026-10-22 8540c2e·e1c995e 배포)
+- 왼쪽 메뉴(`fragments/appshell.html`): 보고서 자동화 › 산안법·시특법·내진성능평가·결함조사·설정(/report/settings.html), 서류 자동화 › 산안법·시특법·실적·설정(/report/docs-settings.html) —
+  설정 줄 2026-10-20(5b5df7c·fb0bb19 배포), 결함조사 2026-10-21(9f371fe), 내진성능평가 2026-10-22(3c380c4)
 - H2 파일 DB (`${GROUPWARE_DATA_DIR:./data}/groupware`)
 
 ## 빌드 (서버에서, 로컬 자바 툴체인 없음이 전제)
