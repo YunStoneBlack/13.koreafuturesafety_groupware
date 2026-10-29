@@ -43,6 +43,8 @@
             <a class="nav-subitem" data-law="sitok" th:href="@{/report/sitok.html}">시특법</a>
             <!-- 내진성능평가(2026-10-21) — 성능평가 회차 목록·새로 만들기(보고서 웹판 seismic.html, 그 화면과 성능평가 회차 화면이 이 줄을 켬) -->
             <a class="nav-subitem" data-law="seismic" th:href="@{/report/seismic.html}">내진성능평가</a>
+            <!-- 건축물관리점검(2026-10-29) — 건축물관리법 정기점검 보고서·생애이력시스템 입력(보고서 웹판 blcm.html, 그 화면과 건 화면이 이 줄을 켬) -->
+            <a class="nav-subitem" data-law="blcm" th:href="@{/report/blcm.html}">건축물관리점검</a>
             <!-- 결함조사(2026-10-21) — 보고서 틀이 없는 시설물도 현장 결함조사·결함현황표·사진첩(보고서 웹판 defect-survey.html, 그 화면이 이 줄을 켬) -->
             <a class="nav-subitem" data-law="defect" th:href="@{/report/defect-survey.html}">결함조사</a>
             <!-- 설정(2026-10-20) — 산안법·시특법 보고서 설정 한 화면(보고서 웹판 settings.html, 그 화면이 이 줄을 켬) -->
@@ -54,6 +56,8 @@
             서류 자동화
         </a>
         <div class="nav-sub">
+            <!-- 견적(2026-10-29 사용자 "그룹웨어 통합 견적서 — 각 용역별로 선택해서 쓰고 관리") — 맨 앞(견적 → 계약, 보고서 웹판 estimates.html, 그 화면이 이 줄을 켬) -->
+            <a class="nav-subitem" data-law="est" th:href="@{/report/estimates.html}">견적</a>
             <a class="nav-subitem" data-law="sanan" th:href="@{/report/docs.html}">산안법</a>
             <a class="nav-subitem" data-law="sitok" th:href="@{/report/sitok-docs.html}">시특법</a>
             <!-- 내진성능평가(2026-10-28 사용자 "서류 자동화 시특법이랑 동일하게") — 내진 용역 계약·착수계·완수계(보고서 웹판 seismic-docs.html, 그 화면이 이 줄을 켬) -->
