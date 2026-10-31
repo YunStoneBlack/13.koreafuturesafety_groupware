@@ -1,30 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_parameter" th:content="${_csrf.parameterName}" />
     <title>한국미래안전 그룹웨어</title>
     <link rel="stylesheet" th:href="@{/css/app.css}" />
-    <!-- 홈 통합 달력(2026-10-31 민재형) — 위젯 파일은 보고서 자동화(/report/) 쪽에서 불러옴(달력 네 곳을 읽어 보여 줌) -->
+    <!-- 홈 통합 달력(2026-10-31 민재형) — 위젯 파일은 보고서 자동화(/report/) 쪽에서 불러옴(달력 네 곳을 읽어 보여 줌, 오늘 중요 일정 띠 포함) -->
     <link rel="stylesheet" href="/report/css/home-cal.css" />
 </head>
-<body>
-<div class="app">
-    <div th:replace="~{fragments/appshell :: sidebar('home')}"></div>
-
-    <!-- 홈 = 보고서 자동화·서류 자동화 입구 카드 두 개만(2026-10-20 사용자 — 화면 가운데 크게, 카드 안에 법별 버튼).
-         공지·결재·일정·직원 칸은 왼쪽 메뉴 각 화면에서. 폰은 카드를 위아래로 쌓아 위쪽에(app.css .home-only) -->
-    <main class="main home-only">
-        <div class="topline">
-            <div>
-                <h1 th:text="${currentUser != null ? currentUser.displayName + '님, 안녕하세요' : '안녕하세요'}">안녕하세요</h1>
+<!-- 홈 시안 3(2026-10-31 민재형 "달력 최적화 — 왼쪽 메뉴를 없애고 위·아래 남색 줄에 로고만, 오늘 중요 일정 띠를 달력 위에"): 홈에서만 왼쪽 메뉴 없음(다른 화면은 그대로).
+     위 줄 = 로고 + [보고서 자동화 ▾] [서류 자동화 ▾] [☰ 그 밖의 메뉴](폰은 ☰ 하나) + 이름·로그아웃, 아래 줄 = 회사 표시. 메뉴 항목은 왼쪽 메뉴(fragments/appshell.html)와 같다. -->
+<body class="home-top">
+<header class="gw-top">
+    <a class="gw-logo" th:href="@{/}"><img th:src="@{/img/logo-white.png}" alt="한국미래안전" /></a>
+    <nav class="gw-nav" aria-label="주 메뉴">
+        <div class="gw-dd">
+            <button type="button" class="gw-btn" aria-haspopup="true" aria-expanded="false">보고서 자동화 <span class="gw-car">▾</span></button>
+            <div class="gw-menu">
+                <a th:href="@{/report/dashboard.html}">산안법</a>
+                <a th:href="@{/report/sitok.html}">시특법</a>
+                <a th:href="@{/report/seismic.html}">내진성능평가</a>
+                <a th:href="@{/report/blcm.html}">건축물관리점검</a>
+                <a th:href="@{/report/defect-survey.html}">결함조사</a>
+                <a th:href="@{/report/settings.html}">설정</a>
             </div>
-            <div class="num page-sub" th:text="${#temporals.format(#temporals.createNow(), 'yyyy.MM.dd (E)')}">오늘</div>
         </div>
+        <div class="gw-dd">
+            <button type="button" class="gw-btn" aria-haspopup="true" aria-expanded="false">서류 자동화 <span class="gw-car">▾</span></button>
+            <div class="gw-menu">
+                <a th:href="@{/report/estimates.html}">견적</a>
+                <a th:href="@{/report/docs.html}">산안법</a>
+                <a th:href="@{/report/sitok-docs.html}">시특법</a>
+                <a th:href="@{/report/seismic-docs.html}">내진성능평가</a>
+                <a th:href="@{/report/docs-performance.html}">실적</a>
+                <a th:href="@{/report/docs-settings.html}">설정</a>
+            </div>
+        </div>
+        <div class="gw-dd gw-more">
+            <button type="button" class="gw-btn gw-ghost" aria-haspopup="true" aria-expanded="false">☰ 그 밖의 메뉴</button>
+            <div class="gw-menu">
+                <a th:href="@{/board}">공지사항</a>
+                <a th:href="@{/approval}">전자결재</a>
+                <a th:href="@{/calendar}">일정공유</a>
+                <a th:href="@{/staff}">직원정보</a>
+                <a th:href="@{/payroll}">급여정보</a>
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">관리자 메뉴</a>
+            </div>
+        </div>
+        <!-- 폰: ☰ 하나에 전부(폭 760px 이하에서 위의 단추 셋 대신) -->
+        <div class="gw-dd gw-all">
+            <button type="button" class="gw-btn gw-ham" aria-label="메뉴" aria-expanded="false">☰</button>
+            <div class="gw-menu gw-menu-all">
+                <div class="gw-g">보고서 자동화</div>
+                <div class="gw-row">
+                    <a th:href="@{/report/dashboard.html}">산안법</a><a th:href="@{/report/sitok.html}">시특법</a><a th:href="@{/report/seismic.html}">내진성능평가</a>
+                    <a th:href="@{/report/blcm.html}">건축물관리점검</a><a th:href="@{/report/defect-survey.html}">결함조사</a><a th:href="@{/report/settings.html}">설정</a>
+                </div>
+                <div class="gw-g">서류 자동화</div>
+                <div class="gw-row">
+                    <a th:href="@{/report/estimates.html}">견적</a><a th:href="@{/report/docs.html}">산안법</a><a th:href="@{/report/sitok-docs.html}">시특법</a>
+                    <a th:href="@{/report/seismic-docs.html}">내진성능평가</a><a th:href="@{/report/docs-performance.html}">실적</a><a th:href="@{/report/docs-settings.html}">설정</a>
+                </div>
+                <div class="gw-g">그 밖의 메뉴</div>
+                <div class="gw-row">
+                    <a th:href="@{/board}">공지사항</a><a th:href="@{/approval}">전자결재</a><a th:href="@{/calendar}">일정공유</a>
+                    <a th:href="@{/staff}">직원정보</a><a th:href="@{/payroll}">급여정보</a><a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}">관리자 메뉴</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <span class="gw-sp"></span>
+    <span class="gw-who" th:text="${currentUser != null ? currentUser.displayName + '님' : ''}"></span>
+    <form class="gw-out" th:action="@{/logout}" method="post"><button type="submit" class="gw-logout">로그아웃</button></form>
+</header>
 
-        <div class="home-center pad">
-          <div class="home-pad">
+<main class="home-main">
+    <div class="home-pad">
+        <div id="home-today" hidden></div>
             <div class="app-doors">
                 <div class="app-door">
                     <!-- 설정 단추(2026-10-22 사용자 "설정 버튼을 만들자 너무 크게 말고") — 왼쪽 메뉴 '설정'과 같은 화면 -->
@@ -41,8 +95,8 @@
                             <a class="door-btn" th:href="@{/report/sitok.html}">시특법</a>
                         </div>
                         <div class="door-btns n2">
-                            <a class="door-btn" th:href="@{/report/seismic.html}">내진성능평가</a>
-                            <a class="door-btn" th:href="@{/report/blcm.html}">건축물관리점검</a>
+                            <a class="door-btn" th:href="@{/report/seismic.html}"><span class="pc">내진성능평가</span><span class="ph">내진</span></a>
+                            <a class="door-btn" th:href="@{/report/blcm.html}"><span class="pc">건축물관리점검</span><span class="ph">건축물</span></a>
                         </div>
                         <div class="door-btns">
                             <a class="door-btn" th:href="@{/report/defect-survey.html}">결함조사</a>
@@ -64,7 +118,7 @@
                         </div>
                         <div class="door-btns n2">
                             <a class="door-btn" th:href="@{/report/sitok-docs.html}">시특법</a>
-                            <a class="door-btn" th:href="@{/report/seismic-docs.html}">내진성능평가</a>
+                            <a class="door-btn" th:href="@{/report/seismic-docs.html}"><span class="pc">내진성능평가</span><span class="ph">내진</span></a>
                         </div>
                         <div class="door-btns">
                             <a class="door-btn" th:href="@{/report/docs-performance.html}">실적</a>
@@ -72,11 +126,24 @@
                     </div>
                 </div>
             </div>
-            <section class="home-cal-wrap"><div id="home-cal" th:attr="data-user=${currentUser != null ? currentUser.displayName : ''}"></div></section>
-          </div>
-        </div>
-    </main>
-</div>
+        <section class="home-cal-wrap"><div id="home-cal" th:attr="data-user=${currentUser != null ? currentUser.displayName : ''}"></div></section>
+    </div>
+</main>
+
+<footer class="gw-foot"><span>한국미래안전 그룹웨어</span><span>안전진단전문기관 경기 제405호</span></footer>
+
+<script>
+    // 위 줄 메뉴 열고 닫기 — 단추를 누르면 그 메뉴만 열고, 바깥을 누르거나 Esc면 닫는다.
+    (function () {
+        var open = function (dd, on) { dd.classList.toggle('open', on); var b = dd.querySelector('.gw-btn'); if (b) b.setAttribute('aria-expanded', on ? 'true' : 'false'); };
+        document.addEventListener('click', function (e) {
+            var dd = e.target.closest('.gw-dd');
+            document.querySelectorAll('.gw-dd.open').forEach(function (x) { if (x !== dd) open(x, false); });
+            if (dd && e.target.closest('.gw-btn')) open(dd, !dd.classList.contains('open'));
+        });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') document.querySelectorAll('.gw-dd.open').forEach(function (x) { open(x, false); }); });
+    })();
+</script>
 <script src="/report/js/home-cal.js" defer></script>
 </body>
 </html>

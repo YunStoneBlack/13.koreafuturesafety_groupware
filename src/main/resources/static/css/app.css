@@ -287,3 +287,60 @@ table.plain td { padding: 10px; border-bottom: 1px solid var(--line); font-size:
 .home-pad .door-stack, .home-pad .door-btns { gap: 8px; }
 .home-pad .door-btn { min-height: 46px; padding: 0 14px; font-size: 15.5px; border-radius: 10px; }
 .home-pad .door-btn::after { font-size: 15px; }
+
+/* ---------- 홈 시안 3(2026-10-31 민재형 "왼쪽 메뉴를 없애고 위·아래 남색 줄에 로고만"): 홈에서만. 위 줄 = 로고·메뉴 단추 셋·이름·로그아웃, 아래 줄 = 회사 표시 ---------- */
+body.home-top { display: flex; flex-direction: column; min-height: 100vh; }
+.gw-top { position: relative; z-index: 20; flex: none; height: 54px; display: flex; align-items: center; gap: 14px; padding: 0 22px; background: var(--sidebar-bg); color: var(--sidebar-text); }
+.gw-logo { display: flex; align-items: center; flex: none; }
+.gw-logo img { height: 30px; width: auto; display: block; }
+.gw-nav { display: flex; align-items: center; gap: 8px; }
+.gw-dd { position: relative; }
+.gw-btn { border: 0; background: rgba(255,255,255,.12); color: inherit; font: inherit; font-size: 13.5px; font-weight: 700; padding: 8px 14px; border-radius: 9px; cursor: pointer; white-space: nowrap; }
+.gw-btn:hover, .gw-dd.open > .gw-btn { background: rgba(255,255,255,.26); }
+.gw-ghost { background: transparent; font-weight: 600; opacity: .85; }
+.gw-car { font-size: 11px; opacity: .8; }
+.gw-menu { display: none; position: absolute; left: 0; top: 44px; min-width: 190px; padding: 6px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 28px rgba(27,30,46,.22); }
+.gw-dd.open > .gw-menu { display: block; }
+.gw-menu a { display: block; padding: 9px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.gw-menu a:hover { background: var(--blue-soft); color: var(--blue); }
+.gw-sp { flex: 1; }
+.gw-who { font-size: 13px; opacity: .92; white-space: nowrap; }
+.gw-out { margin: 0; }
+.gw-logout { background: transparent; color: inherit; font: inherit; font-size: 12.5px; padding: 5px 12px; border: 1px solid rgba(255,255,255,.3); border-radius: 8px; cursor: pointer; }
+.gw-logout:hover { background: rgba(255,255,255,.14); }
+.gw-all { display: none; }
+.home-main { flex: 1; padding: 18px 28px 24px; min-width: 0; }
+.home-main .home-pad { max-width: none; }
+.gw-foot { flex: none; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; background: var(--sidebar-bg); color: var(--sidebar-muted); font-size: 11.5px; }
+.home-pad .door-btn .ph { display: none; } /* 폰에서만 줄인 이름(내진·건축물) */
+/* 폰(760px 이하) — 위 줄은 로고와 ☰ 하나, 메뉴는 한꺼번에 펼침, 바로가기 카드는 가로 둘로 작게 */
+@media (max-width: 760px) {
+  .gw-top { height: 50px; padding: 0 12px; gap: 8px; }
+  .gw-logo img { height: 26px; }
+  .gw-dd:not(.gw-all) { display: none; }
+  .gw-all { display: block; position: static; }
+  .gw-ham { font-size: 19px; padding: 5px 12px; background: transparent; border: 1px solid rgba(255,255,255,.3); }
+  .gw-menu-all { position: fixed; left: 0; right: 0; top: 50px; min-width: 0; max-height: calc(100vh - 50px); overflow: auto; border-radius: 0 0 14px 14px; padding: 8px 10px 12px; }
+  .gw-g { font-size: 11.5px; color: var(--muted); font-weight: 700; padding: 8px 6px 4px; }
+  .gw-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 4px 6px; }
+  .gw-row a { border: 1px solid var(--line); background: var(--paper); padding: 9px 12px; font-size: 13.5px; }
+  .gw-who { display: none; }
+  .gw-foot { height: 30px; justify-content: center; gap: 10px; font-size: 10.5px; padding: 0 10px; }
+  .gw-foot span:first-child { display: none; }
+  .home-main { padding: 10px 10px 16px; }
+  .home-pad { gap: 10px; }
+  .home-pad .app-doors { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+  .home-pad .app-door { min-width: 0; }
+  .home-pad .door-btns, .home-pad .door-btns.n2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .home-pad .door-btn { white-space: normal; text-align: left; line-height: 1.25; overflow: hidden; }
+  .home-pad .app-door { padding: 10px 11px; gap: 8px; border-radius: 12px; }
+  .home-pad .app-door .door-ico { display: none; }
+  .home-pad .app-door .door-text b { font-size: 14.5px; white-space: normal; }
+  .home-pad .app-door .door-text small { display: none; }
+  .home-pad .door-set { display: none; }
+  .home-pad .door-stack, .home-pad .door-btns { gap: 5px; }
+  .home-pad .door-btn { min-height: 40px; padding: 4px 8px; font-size: 12.5px; border-radius: 9px; }
+  .home-pad .door-btn::after { display: none; }
+  .home-pad .door-btn .pc { display: none; }
+  .home-pad .door-btn .ph { display: inline; }
+}
