@@ -6,6 +6,8 @@
     <meta name="_csrf_parameter" th:content="${_csrf.parameterName}" />
     <title>한국미래안전 그룹웨어</title>
     <link rel="stylesheet" th:href="@{/css/app.css}" />
+    <!-- 홈 통합 달력(2026-10-31 민재형) — 위젯 파일은 보고서 자동화(/report/) 쪽에서 불러옴(달력 네 곳을 읽어 보여 줌) -->
+    <link rel="stylesheet" href="/report/css/home-cal.css" />
 </head>
 <body>
 <div class="app">
@@ -21,7 +23,8 @@
             <div class="num page-sub" th:text="${#temporals.format(#temporals.createNow(), 'yyyy.MM.dd (E)')}">오늘</div>
         </div>
 
-        <div class="home-center">
+        <div class="home-center pad">
+          <div class="home-pad">
             <div class="app-doors">
                 <div class="app-door">
                     <!-- 설정 단추(2026-10-22 사용자 "설정 버튼을 만들자 너무 크게 말고") — 왼쪽 메뉴 '설정'과 같은 화면 -->
@@ -69,8 +72,11 @@
                     </div>
                 </div>
             </div>
+            <section class="home-cal-wrap"><div id="home-cal" th:attr="data-user=${currentUser != null ? currentUser.displayName : ''}"></div></section>
+          </div>
         </div>
     </main>
 </div>
+<script src="/report/js/home-cal.js" defer></script>
 </body>
 </html>
