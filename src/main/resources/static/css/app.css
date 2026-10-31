@@ -308,6 +308,7 @@ body.home-top { display: flex; flex-direction: column; min-height: 100vh; }
 .gw-out { margin: 0; }
 .gw-logout { background: transparent; color: inherit; font: inherit; font-size: 12.5px; padding: 5px 12px; border: 1px solid rgba(255,255,255,.3); border-radius: 8px; cursor: pointer; }
 .gw-logout:hover { background: rgba(255,255,255,.14); }
+.home-pad.doors-off .app-doors { display: none; } /* 바로가기 카드 숨김 — home.html의 doors-off를 지우면 다시 보임 */
 .gw-all { display: none; }
 .home-main { flex: 1; padding: 18px 28px 24px; min-width: 0; }
 .home-main .home-pad { max-width: none; }
