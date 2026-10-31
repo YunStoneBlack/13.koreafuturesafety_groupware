@@ -271,26 +271,19 @@ table.plain { width: 100%; border-collapse: collapse; }
 table.plain th { text-align: left; font-size: 11.5px; color: var(--faint); text-transform: uppercase; letter-spacing: .04em; padding: 8px 10px; border-bottom: 1px solid var(--line); }
 table.plain td { padding: 10px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
 
-/* ---------- 홈 패드형(2026-10-31 민재형 "홈화면을 패드처럼 — 바로가기 + 대형 달력"): 왼쪽 바로가기 카드 둘(작게), 오른쪽 큰 통합 달력. 달력 = /report/js/home-cal.js.
-   폭 1100px 이하(폰은 viewport 메타가 없어 이 폭으로 보임)는 카드 둘을 가로로 놓고 달력을 그 아래 ---------- */
+/* ---------- 홈 패드형 A안(2026-10-31 민재형 "이게 A안, 이걸로"): 위에 바로가기 카드 둘(가로·작게), 아래에 큰 통합 달력. 달력 = /report/js/home-cal.js.
+   폰은 viewport 메타가 없어 약 980px 폭으로 보이므로 같은 모양으로 줄어듦 ---------- */
 .home-center.pad { align-items: flex-start; justify-content: stretch; padding: 0 0 40px; }
-.home-pad { width: 100%; display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 16px; align-items: start; }
-.home-pad .app-doors { max-width: none; grid-template-columns: 1fr; gap: 14px; }
-.home-pad .app-door { min-height: 0; gap: 12px; padding: 16px 16px 14px; border-radius: 14px; }
-.home-pad .app-door .door-top { gap: 12px; }
-.home-pad .app-door .door-ico { width: 42px; height: 42px; border-radius: 12px; }
-.home-pad .app-door .door-ico svg { width: 22px; height: 22px; }
-.home-pad .app-door .door-text b { font-size: 17px; }
-.home-pad .app-door .door-text small { font-size: 12px; }
-.home-pad .door-set { top: 12px; right: 12px; height: 30px; padding: 0 10px 0 8px; font-size: 12px; gap: 4px; }
+.home-pad { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+.home-pad .app-doors { max-width: none; grid-template-columns: 1fr 1fr; gap: 16px; }
+.home-pad .app-door { min-height: 0; gap: 14px; padding: 18px 20px 16px; border-radius: 14px; }
+.home-pad .app-door .door-top { gap: 14px; }
+.home-pad .app-door .door-ico { width: 46px; height: 46px; border-radius: 13px; }
+.home-pad .app-door .door-ico svg { width: 24px; height: 24px; }
+.home-pad .app-door .door-text b { font-size: 19px; }
+.home-pad .app-door .door-text small { font-size: 12.5px; }
+.home-pad .door-set { top: 14px; right: 14px; height: 30px; padding: 0 11px 0 9px; font-size: 12.5px; gap: 4px; }
 .home-pad .door-set svg { width: 15px; height: 15px; }
 .home-pad .door-stack, .home-pad .door-btns { gap: 8px; }
-.home-pad .door-btn { min-height: 42px; padding: 0 12px; font-size: 14.5px; border-radius: 10px; }
+.home-pad .door-btn { min-height: 46px; padding: 0 14px; font-size: 15.5px; border-radius: 10px; }
 .home-pad .door-btn::after { font-size: 15px; }
-@media (max-width: 1100px) {
-  .home-pad { grid-template-columns: 1fr; }
-  .home-pad .app-doors { grid-template-columns: 1fr 1fr; }
-  .home-pad .app-door .door-text b { font-size: 18px; }
-  .home-pad .door-btn { min-height: 46px; font-size: 15.5px; }
-}
-
